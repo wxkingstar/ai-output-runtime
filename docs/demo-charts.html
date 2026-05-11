@@ -474,20 +474,24 @@
 
     .ai-toc {
       display: none;
-      padding: 10px;
+      padding: 12px 14px;
       background: var(--ai-toc-bg);
       border: 1px solid var(--ai-line);
       border-radius: 7px;
       box-shadow: var(--ai-shadow);
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 32px);
+      overflow-y: auto;
     }
 
     .ai-toc strong {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.10em;
       color: var(--ai-muted);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .ai-toc a {
@@ -495,12 +499,46 @@
       color: var(--ai-ink);
       text-decoration: none;
       font-size: 13px;
-      line-height: 1.35;
-      padding: 7px 0;
-      border-top: 1px solid var(--ai-line);
+      line-height: 1.4;
+      padding: 6px 8px 6px 10px;
+      border-left: 2px solid transparent;
+      transition: color 120ms, border-color 120ms, background-color 120ms;
     }
 
-    .ai-toc a:hover { color: var(--ai-accent); }
+    .ai-toc a:hover { color: var(--ai-accent); background: var(--ai-panel-soft); }
+    .ai-toc a.active {
+      color: var(--ai-accent);
+      font-weight: 600;
+      border-left-color: var(--ai-accent);
+      background: var(--ai-panel-soft);
+    }
+
+    .ai-document :is(h1, h2, h3) { position: relative; }
+    .ai-anchor {
+      display: inline-block;
+      margin-left: 8px;
+      color: var(--ai-muted);
+      opacity: 0;
+      transition: opacity 120ms;
+      text-decoration: none;
+      font-weight: 400;
+      font-size: 0.85em;
+      cursor: pointer;
+      user-select: none;
+    }
+    .ai-anchor:hover { color: var(--ai-accent); }
+    .ai-document h1:hover .ai-anchor,
+    .ai-document h2:hover .ai-anchor,
+    .ai-document h3:hover .ai-anchor { opacity: 0.7; }
+    .ai-anchor.copied { opacity: 1; color: var(--ai-green); }
+
+    @media (min-width: 1200px) {
+      .ai-layout {
+        max-width: 1240px;
+        grid-template-columns: minmax(0, 1fr) 220px;
+      }
+      .ai-toc { display: block; }
+    }
 
     .ai-component {
       margin: 14px 0;
@@ -997,6 +1035,83 @@
     }
     .ai-button.ai-skim-on { background: var(--ai-accent); color: #fff; border-color: var(--ai-accent); }
 
+    body.ai-no-numbers .ai-component-header::before { display: none; }
+    body.ai-no-numbers .ai-component-header { padding-left: 14px; }
+
+    .ai-exec-summary {
+      margin: 14px 0 18px;
+      background: var(--ai-panel);
+      border: 1px solid var(--ai-line);
+      border-left: 4px solid var(--ai-accent);
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: var(--ai-shadow);
+    }
+    .ai-exec-summary[data-expanded="false"] .ai-exec-body { display: none; }
+    .ai-exec-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ai-exec-head h3 {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ai-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+    }
+    .ai-exec-toggle {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--ai-muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 2px 8px;
+      line-height: 1;
+    }
+    .ai-exec-toggle:hover { color: var(--ai-ink); }
+    .ai-exec-body { margin-top: 10px; }
+    .ai-exec-takeaway { margin: 0 0 10px; font-size: 14px; line-height: 1.55; color: var(--ai-ink); }
+    .ai-exec-takeaway strong { color: var(--ai-accent); margin-right: 4px; }
+    .ai-exec-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .ai-exec-metric {
+      background: var(--ai-panel-soft);
+      border: 1px solid var(--ai-line);
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .ai-exec-m-label { font-size: 10px; color: var(--ai-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .ai-exec-m-value { font-size: 17px; font-weight: 700; color: var(--ai-ink); font-variant-numeric: tabular-nums; }
+    body.ai-no-summary .ai-exec-summary { display: none !important; }
+
+    .ai-export-btn {
+      appearance: none;
+      border: 1px solid var(--ai-line);
+      background: var(--ai-panel);
+      color: var(--ai-muted);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font: 11px/1 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: color 120ms, border-color 120ms;
+    }
+    .ai-export-btn:hover { color: var(--ai-accent); border-color: var(--ai-accent); }
+    .ai-export-btn.copied { color: var(--ai-green); border-color: var(--ai-green); }
+    script[data-ai-csv] { display: none; }
+    .ai-component-header > .ai-export-btn { margin-left: auto; }
+    .ai-component-header > .ai-search ~ .ai-export-btn { margin-left: 0; }
+
     .ai-gauge-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1137,31 +1252,83 @@
     }
 
     @media print {
+      @page {
+        size: A4;
+        margin: 18mm 16mm 22mm 16mm;
+      }
       :root, :root[data-ai-theme="dark"] {
         --ai-bg: #ffffff;
         --ai-panel: #ffffff;
         --ai-panel-soft: #ffffff;
-        --ai-ink: #000000;
+        --ai-ink: #111111;
         --ai-muted: #555555;
         --ai-line: #cccccc;
         --ai-shadow: none;
         --ai-topbar-bg: #ffffff;
+        --ai-pre-bg: #f4f4f7;
+        --ai-pre-fg: #111111;
+        --ai-codeblock-head-bg: #eaeaef;
+        --ai-codeblock-head-fg: #333333;
+        --ai-codeblock-head-border: #d6d6dc;
         color-scheme: light;
       }
-      body.ai-output-body { background: #fff; color: #000; }
-      .ai-topbar, .ai-toc, .ai-actions, .ai-source, .ai-search { display: none !important; }
+      body.ai-output-body { background: #fff; color: #111; font-size: 11pt; }
+      .ai-topbar, .ai-toc, .ai-actions, .ai-source, .ai-search,
+      .ai-codeblock-copy, .ai-exec-toggle, [data-ai-export-csv] { display: none !important; }
       .ai-shell { min-height: auto; }
       .ai-layout { grid-template-columns: 1fr; padding: 0; }
-      .ai-document { padding: 0; }
-      .ai-component, .ai-table, .ai-callout, .ai-metric-card {
+      .ai-document { padding: 0; max-width: none; }
+      .ai-component, .ai-table, .ai-callout, .ai-metric-card,
+      .ai-trend-card, .ai-status-card, .ai-gauge-card {
         box-shadow: none !important;
         break-inside: avoid;
         page-break-inside: avoid;
       }
-      .ai-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ai-metric-grid, .ai-trend-grid, .ai-status-grid, .ai-gauge-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
       .ai-table th, .ai-table td { padding: 6px 8px; }
+      .ai-report-header {
+        background: #fafbff !important;
+        color: #111 !important;
+        border: 1px solid #d6d8e1;
+        border-radius: 6px;
+        padding: 32px 28px;
+        page-break-after: always;
+        break-after: page;
+        margin: 0 0 0 0;
+        min-height: calc(100vh - 80mm);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .ai-report-header .ai-rh-title { color: #111; font-size: 28pt; }
+      .ai-report-header .ai-rh-subtitle { color: #444; font-size: 13pt; }
+      .ai-report-header .ai-rh-chip {
+        background: #ecedf5 !important;
+        color: #333 !important;
+        border-color: #d6d8e1 !important;
+      }
+      .ai-report-header .ai-rh-key { color: #555 !important; }
+      .ai-report-header .ai-rh-status-final { background: #d6f0dc !important; color: #14532d !important; }
+      .ai-report-header .ai-rh-status-review { background: #fef3c7 !important; color: #78350f !important; }
+      .ai-report-header .ai-rh-class-confidential,
+      .ai-report-header .ai-rh-class-restricted { background: #fee2e2 !important; color: #7f1d1d !important; }
+      .ai-document > h1 { page-break-before: always; break-before: page; }
+      .ai-document > h1:first-child { page-break-before: avoid; break-before: avoid; }
+      .ai-report-header + h1 { page-break-before: avoid; break-before: avoid; }
+      .ai-component-header::before { display: none; }
+      .ai-callout, .ai-trend-card.ai-tone-good, .ai-trend-card.ai-tone-warn, .ai-trend-card.ai-tone-bad {
+        border: 1px solid #ccc !important;
+      }
+      .ai-callout-success { border-left: 4px solid #16a34a !important; }
+      .ai-callout-warning { border-left: 4px solid #f97316 !important; }
+      .ai-callout-danger  { border-left: 4px solid #dc2626 !important; }
+      .ai-codeblock { break-inside: avoid; }
+      .ai-codeblock pre { background: #f4f4f7; color: #111; padding: 10px 12px; }
       a { color: inherit; text-decoration: underline; }
-      a[href]::after { content: " (" attr(href) ")"; font-size: 11px; color: #555; }
+      a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #666; }
+      .ai-exec-summary { display: none !important; }
     }
   `;
 
@@ -1412,6 +1579,31 @@
   function validateAsOf(value, name) {
     if (value === undefined) return;
     requirePlainText(value, name, 40);
+  }
+
+  function csvCell(v) {
+    if (v === undefined || v === null) return "";
+    const s = String(v);
+    if (/["\n\r,]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+  function csvSerialize(rows) {
+    return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";
+  }
+  function csvSlugFilename(title, fallback) {
+    const base = String(title || fallback || "report")
+      .toLowerCase()
+      .replace(/[^\w一-龥-]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60);
+    return (base || "report") + ".csv";
+  }
+  function csvAttachment(csvText, filename) {
+    const safe = String(csvText).replace(/<\/script/gi, "<\\/script");
+    return `<script type="text/csv" data-ai-csv data-ai-csv-name="${escapeHtml(filename)}">${safe}<\/script>`;
+  }
+  function csvButton() {
+    return `<button class="ai-export-btn" type="button" data-ai-export-csv aria-label="Export CSV" title="Export CSV">⤓ CSV</button>`;
   }
 
   function validateChart(data) {
@@ -2006,8 +2198,12 @@
     const title = data.title || "";
     const subtitle = data.subtitle || "";
     const caption = data.caption ? `<div class="ai-chart-caption">${escapeHtml(data.caption)}</div>` : "";
-    return componentShell(title || L("defaultChartTitle"), subtitle, "",
-      `<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="${out.viewBox}" role="img" aria-label="${escapeHtml(title || L("defaultChartTitle"))}">${out.svgBody}</svg></div>${out.legend}${caption}`);
+    const csvRows = data.type === "pie" || data.type === "donut"
+      ? [["label", "value"], ...data.slices.map((s) => [s.label, s.value])]
+      : [["x", ...data.series.map((s) => s.name)], ...data.x.map((x, i) => [x, ...data.series.map((s) => s.data[i])])];
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "chart"));
+    return componentShell(title || L("defaultChartTitle"), subtitle, csvButton(),
+      `<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="${out.viewBox}" role="img" aria-label="${escapeHtml(title || L("defaultChartTitle"))}">${out.svgBody}</svg></div>${out.legend}${caption}${attachment}`);
   }
 
   function componentShell(title, subtitle, controls, body) {
@@ -2044,9 +2240,12 @@
       requireArray(row, "row");
       return `<tr>${row.map((cell) => `<td>${typeof cell === "string" && cell.length < 16 ? renderBadge(cell) : inlineMarkdown(cell)}</td>`).join("")}</tr>`;
     }).join("");
-    const controls = data.filterable === false ? "" : `<input class="ai-search" type="search" placeholder="${escapeHtml(L("filter"))}" data-ai-filter="${id}">`;
+    const searchInput = data.filterable === false ? "" : `<input class="ai-search" type="search" placeholder="${escapeHtml(L("filter"))}" data-ai-filter="${id}">`;
+    const controls = searchInput + csvButton();
     const title = data.title || L("defaultTableTitle");
     const subtitle = data.subtitle || L("defaultTableSubtitle");
+    const csvRows = [data.columns.slice(), ...data.rows.map((r) => r.slice())];
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "table"));
     return componentShell(title, subtitle, controls, `
       <div class="ai-table-wrap">
         <table class="ai-table" id="${id}">
@@ -2054,6 +2253,7 @@
           <tbody>${rows}</tbody>
         </table>
       </div>
+      ${attachment}
     `);
   }
 
@@ -2134,12 +2334,21 @@
         </article>
       `;
     }).join("");
-    const head = (data.title || data.asOf) ? `
+    const csvRows = [["label", "value", "format", "delta_value", "delta_label", "tone", "note"]];
+    data.items.forEach((item) => csvRows.push([
+      item.label, item.value, item.format || "",
+      item.delta ? item.delta.value : "",
+      item.delta && item.delta.label ? item.delta.label : "",
+      item.tone || "", item.note || ""
+    ]));
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "trend"));
+    const head = `
         <div class="ai-component-header">
           <div><h3 class="ai-component-title">${escapeHtml(data.title || "")}</h3></div>
+          ${csvButton()}
           ${renderAsOf(data.asOf)}
-        </div>` : "";
-    return `<section class="ai-component ai-trend-grid-wrap" aria-label="${escapeHtml(data.title || "Trend metrics")}">${head}<div class="ai-trend-grid">${cards}</div></section>`;
+        </div>`;
+    return `<section class="ai-component ai-trend-grid-wrap" aria-label="${escapeHtml(data.title || "Trend metrics")}">${head}<div class="ai-trend-grid">${cards}</div>${attachment}</section>`;
   }
 
   function renderStatusGrid(data) {
@@ -2156,12 +2365,15 @@
         </article>
       `;
     }).join("");
-    const head = (data.title || data.asOf) ? `
+    const csvRows = [["label", "status", "value", "note"], ...data.items.map((it) => [it.label, it.status, it.value || "", it.note || ""])];
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "status"));
+    const head = `
         <div class="ai-component-header">
           <div><h3 class="ai-component-title">${escapeHtml(data.title || "")}</h3></div>
+          ${csvButton()}
           ${renderAsOf(data.asOf)}
-        </div>` : "";
-    return `<section class="ai-component ai-status-grid-wrap" aria-label="${escapeHtml(data.title || "Status grid")}">${head}<div class="ai-status-grid">${cards}</div></section>`;
+        </div>`;
+    return `<section class="ai-component ai-status-grid-wrap" aria-label="${escapeHtml(data.title || "Status grid")}">${head}<div class="ai-status-grid">${cards}</div>${attachment}</section>`;
   }
 
   function renderReportHeader(data) {
@@ -2233,12 +2445,15 @@
         </li>
       `;
     }).join("");
-    const head = (data.title || data.asOf) ? `
+    const csvRows = [["task", "owner", "due", "status", "priority"], ...data.items.map((it) => [it.task, it.owner || "", it.due || "", it.status || "todo", it.priority || ""])];
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "action-items"));
+    const head = `
         <div class="ai-component-header">
           <div><h3 class="ai-component-title">${escapeHtml(data.title || "")}</h3></div>
+          ${csvButton()}
           ${renderAsOf(data.asOf)}
-        </div>` : "";
-    return `<section class="ai-component ai-action-wrap">${head}<ul class="ai-action-list">${rows}</ul></section>`;
+        </div>`;
+    return `<section class="ai-component ai-action-wrap">${head}<ul class="ai-action-list">${rows}</ul>${attachment}</section>`;
   }
 
   function renderComparison(data) {
@@ -2258,15 +2473,25 @@
       }).join("");
       return `<tr class="ai-tone-${c.tone || "neutral"}"><th class="ai-cmp-row-head">${escapeHtml(c.label)}${weight}</th>${cells}</tr>`;
     }).join("");
+    const csvHeader = ["criterion", ...data.options, "weight"];
+    if (data.recommended) csvHeader.push("recommended");
+    const csvRows = [csvHeader];
+    data.criteria.forEach((c) => {
+      const row = [c.label, ...c.values.map((v) => v), c.weight !== undefined ? c.weight : ""];
+      if (data.recommended) row.push(data.recommended);
+      csvRows.push(row);
+    });
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "comparison"));
     const head = `
       <div class="ai-component-header">
         <div>
           <h3 class="ai-component-title">${escapeHtml(data.title || "Comparison")}</h3>
           ${data.subtitle ? `<div class="ai-component-subtitle">${escapeHtml(data.subtitle)}</div>` : ""}
         </div>
+        ${csvButton()}
         ${renderAsOf(data.asOf)}
       </div>`;
-    return `<section class="ai-component ai-comparison-wrap">${head}<div class="ai-table-wrap"><table class="ai-table ai-comparison"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></div></section>`;
+    return `<section class="ai-component ai-comparison-wrap">${head}<div class="ai-table-wrap"><table class="ai-table ai-comparison"><thead><tr><th></th>${headers}</tr></thead><tbody>${rows}</tbody></table></div>${attachment}</section>`;
   }
 
   function autoTone(progress) {
@@ -2314,12 +2539,21 @@
         </article>
       `;
     }).join("");
-    const head = (data.title || data.asOf) ? `
+    const csvRows = [["label", "value", "target", "min", "max", "format", "tone", "note"], ...data.items.map((it) => [
+      it.label, it.value,
+      it.target !== undefined ? it.target : "",
+      it.min !== undefined ? it.min : "",
+      it.max !== undefined ? it.max : "",
+      it.format || "", it.tone || "", it.note || ""
+    ])];
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "gauge"));
+    const head = `
         <div class="ai-component-header">
           <div><h3 class="ai-component-title">${escapeHtml(data.title || "")}</h3></div>
+          ${csvButton()}
           ${renderAsOf(data.asOf)}
-        </div>` : "";
-    return `<section class="ai-component ai-gauge-wrap">${head}<div class="ai-gauge-grid">${cards}</div></section>`;
+        </div>`;
+    return `<section class="ai-component ai-gauge-wrap">${head}<div class="ai-gauge-grid">${cards}</div>${attachment}</section>`;
   }
 
   function renderFunnel(data) {
@@ -2351,15 +2585,24 @@
         </div>
       `;
     }).join("");
+    const csvRows = [["stage", "value", "step_pct", "overall_pct", "tone", "note"]];
+    data.stages.forEach((stage, i) => {
+      const prev = i === 0 ? null : data.stages[i - 1].value;
+      const step = prev && prev > 0 ? +(stage.value / prev).toFixed(4) : "";
+      const overall = first > 0 ? +(stage.value / first).toFixed(4) : "";
+      csvRows.push([stage.label, stage.value, step, overall, stage.tone || "", stage.note || ""]);
+    });
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "funnel"));
     const head = `
       <div class="ai-component-header">
         <div>
           <h3 class="ai-component-title">${escapeHtml(data.title || (currentLocale.startsWith("zh") ? "漏斗" : "Funnel"))}</h3>
           ${data.subtitle ? `<div class="ai-component-subtitle">${escapeHtml(data.subtitle)}</div>` : ""}
         </div>
+        ${csvButton()}
         ${renderAsOf(data.asOf)}
       </div>`;
-    return `<section class="ai-component ai-funnel-wrap">${head}<div class="ai-funnel">${rows}</div></section>`;
+    return `<section class="ai-component ai-funnel-wrap">${head}<div class="ai-funnel">${rows}</div>${attachment}</section>`;
   }
 
   function renderWaterfall(data) {
@@ -2410,15 +2653,24 @@
       const y = yScale(p.to);
       return `<line x1="${x1.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y.toFixed(1)}" stroke="var(--ai-line)" stroke-dasharray="3 3" stroke-width="1.5"/>`;
     });
+    const csvRows = [["label", "value", "kind", "cumulative"]];
+    let runningCum = 0;
+    bars.forEach((bar) => {
+      if (bar.kind === "start" || bar.kind === "subtotal" || bar.kind === "end") runningCum = bar.value;
+      else runningCum += bar.value;
+      csvRows.push([bar.label, bar.value, bar.kind, runningCum]);
+    });
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "waterfall"));
     const head = `
       <div class="ai-component-header">
         <div>
           <h3 class="ai-component-title">${escapeHtml(data.title || (currentLocale.startsWith("zh") ? "瀑布图" : "Waterfall"))}</h3>
           ${data.subtitle ? `<div class="ai-component-subtitle">${escapeHtml(data.subtitle)}</div>` : ""}
         </div>
+        ${csvButton()}
         ${renderAsOf(data.asOf)}
       </div>`;
-    return `<section class="ai-component ai-waterfall-wrap">${head}<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeHtml(data.title || "Waterfall")}">${connectors.join("")}${svgBars.join("")}</svg></div></section>`;
+    return `<section class="ai-component ai-waterfall-wrap">${head}<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escapeHtml(data.title || "Waterfall")}">${connectors.join("")}${svgBars.join("")}</svg></div>${attachment}</section>`;
   }
 
   function renderHeatmap(data) {
@@ -2444,16 +2696,20 @@
     }).join("")).join("");
     const legendMin = formatValue(lo, data.format, currentLocale);
     const legendMax = formatValue(hi, data.format, currentLocale);
+    const csvRows = [["", ...data.xLabels]];
+    data.rows.forEach((row, j) => csvRows.push([data.yLabels[j], ...row]));
+    const attachment = csvAttachment(csvSerialize(csvRows), csvSlugFilename(data.title, "heatmap"));
     const head = `
       <div class="ai-component-header">
         <div>
           <h3 class="ai-component-title">${escapeHtml(data.title || (currentLocale.startsWith("zh") ? "热力图" : "Heatmap"))}</h3>
           ${data.subtitle ? `<div class="ai-component-subtitle">${escapeHtml(data.subtitle)}</div>` : ""}
         </div>
+        ${csvButton()}
         ${renderAsOf(data.asOf)}
       </div>`;
     const legend = `<div class="ai-heat-legend"><span>${escapeHtml(legendMin)}</span><span class="ai-heat-bar" style="background:linear-gradient(to right, ${colorVar} 8%, ${colorVar} 100%);opacity:1;"></span><span>${escapeHtml(legendMax)}</span></div>`;
-    return `<section class="ai-component ai-heatmap-wrap">${head}<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="0 0 ${W} ${H}" role="img" preserveAspectRatio="xMidYMid meet">${xHeaders}${yHeaders}${cells}</svg></div>${legend}</section>`;
+    return `<section class="ai-component ai-heatmap-wrap">${head}<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="0 0 ${W} ${H}" role="img" preserveAspectRatio="xMidYMid meet">${xHeaders}${yHeaders}${cells}</svg></div>${legend}${attachment}</section>`;
   }
 
   function renderMatrix(data) {
@@ -2522,7 +2778,7 @@
   COMPONENTS.set("heatmap@1", (_type, data) => renderHeatmap(data));
   COMPONENTS.set("matrix@1", (_type, data) => renderMatrix(data));
 
-  const RUNTIME_VERSION = "v0.4.0";
+  const RUNTIME_VERSION = "v0.4.1";
 
   const BUILTIN_LANG_ALIAS = {
     js: "js", javascript: "js", jsx: "js", mjs: "js", cjs: "js",
@@ -2803,6 +3059,112 @@
     return `<nav class="ai-toc"><strong>${escapeHtml(L("toc"))}</strong>${items.join("")}</nav>`;
   }
 
+  function injectExecutiveSummary(target) {
+    const doc = target.querySelector(".ai-document");
+    if (!doc) return;
+    const header = doc.querySelector(".ai-report-header");
+    const firstCallout = doc.querySelector(".ai-callout");
+    const firstMetric = doc.querySelector(".ai-trend-grid, .ai-metric-grid");
+    if (!firstCallout && !firstMetric) return;
+    const calloutTitleEl = firstCallout ? firstCallout.querySelector(".ai-component-title") : null;
+    const calloutBodyEl = firstCallout ? firstCallout.querySelector(".ai-component-body p") : null;
+    const calloutTitle = calloutTitleEl ? calloutTitleEl.textContent.trim() : "";
+    const calloutBody = calloutBodyEl ? calloutBodyEl.textContent.trim() : "";
+    const bodyExcerpt = calloutBody.length > 260 ? calloutBody.slice(0, 260).trim() + "…" : calloutBody;
+    let metrics = [];
+    if (firstMetric) {
+      if (firstMetric.classList.contains("ai-trend-grid")) {
+        metrics = Array.from(firstMetric.querySelectorAll(".ai-trend-card")).slice(0, 4).map((c) => ({
+          label: (c.querySelector(".ai-trend-label") || {}).textContent || "",
+          value: (c.querySelector(".ai-trend-value") || {}).textContent || ""
+        }));
+      } else {
+        metrics = Array.from(firstMetric.querySelectorAll(".ai-metric-card")).slice(0, 4).map((c) => ({
+          label: (c.querySelector(".ai-metric-label") || {}).textContent || "",
+          value: (c.querySelector(".ai-metric-value") || {}).textContent || ""
+        }));
+      }
+    }
+    if (!bodyExcerpt && !metrics.length) return;
+    const summaryTitle = currentLocale.startsWith("zh") ? "执行摘要" : "Executive summary";
+    const metricsHtml = metrics.map((m) => `<div class="ai-exec-metric"><span class="ai-exec-m-label">${escapeHtml(m.label)}</span><span class="ai-exec-m-value">${escapeHtml(m.value)}</span></div>`).join("");
+    const html = `
+      <section class="ai-exec-summary" data-expanded="true">
+        <header class="ai-exec-head">
+          <h3>${escapeHtml(summaryTitle)}</h3>
+          <button class="ai-exec-toggle" type="button" aria-expanded="true" aria-label="${escapeHtml(summaryTitle)}">▾</button>
+        </header>
+        <div class="ai-exec-body">
+          ${bodyExcerpt ? `<p class="ai-exec-takeaway">${calloutTitle ? `<strong>${escapeHtml(calloutTitle)}</strong>` : ""} ${escapeHtml(bodyExcerpt)}</p>` : ""}
+          ${metricsHtml ? `<div class="ai-exec-metrics">${metricsHtml}</div>` : ""}
+        </div>
+      </section>
+    `;
+    const insertAfter = header || doc.firstElementChild;
+    if (!insertAfter) return;
+    insertAfter.insertAdjacentHTML("afterend", html);
+    const card = doc.querySelector(".ai-exec-summary");
+    const toggle = card.querySelector(".ai-exec-toggle");
+    toggle.addEventListener("click", () => {
+      const expanded = card.dataset.expanded === "true";
+      card.dataset.expanded = expanded ? "false" : "true";
+      toggle.textContent = expanded ? "▸" : "▾";
+      toggle.setAttribute("aria-expanded", String(!expanded));
+    });
+  }
+
+  function bindTocHighlight(root) {
+    const toc = root.querySelector(".ai-toc");
+    if (!toc) return;
+    const links = Array.from(toc.querySelectorAll("a[href^='#']"));
+    if (!links.length || typeof IntersectionObserver === "undefined") return;
+    const idMap = new Map();
+    links.forEach((l) => idMap.set(l.getAttribute("href").slice(1), l));
+    const targets = [];
+    idMap.forEach((_, id) => {
+      const el = root.querySelector(`#${CSS.escape(id)}`);
+      if (el) targets.push(el);
+    });
+    if (!targets.length) return;
+    let lastActive = null;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const link = idMap.get(entry.target.id);
+          if (link && link !== lastActive) {
+            if (lastActive) lastActive.classList.remove("active");
+            link.classList.add("active");
+            lastActive = link;
+          }
+        }
+      });
+    }, { rootMargin: "0px 0px -65% 0px", threshold: [0, 0.25, 0.5, 1] });
+    targets.forEach((t) => observer.observe(t));
+  }
+
+  function bindHeadingAnchors(root) {
+    root.querySelectorAll(".ai-document :is(h1, h2, h3)[id]").forEach((h) => {
+      if (h.querySelector(".ai-anchor")) return;
+      const a = document.createElement("a");
+      a.className = "ai-anchor";
+      a.href = "#" + h.id;
+      a.textContent = "#";
+      a.setAttribute("aria-label", "Copy section link");
+      a.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const url = new URL(location.href);
+        url.hash = h.id;
+        if (navigator.clipboard) {
+          try { await navigator.clipboard.writeText(url.toString()); } catch (_) { /* ignore */ }
+        }
+        history.replaceState(null, "", url.toString());
+        a.classList.add("copied");
+        setTimeout(() => a.classList.remove("copied"), 1200);
+      });
+      h.appendChild(a);
+    });
+  }
+
   function bindInteractions(root) {
     root.querySelectorAll("[data-ai-filter]").forEach((input) => {
       input.addEventListener("input", () => {
@@ -2812,6 +3174,28 @@
         table.querySelectorAll("tbody tr").forEach((row) => {
           row.hidden = query && !row.textContent.toLowerCase().includes(query);
         });
+      });
+    });
+
+    root.querySelectorAll("[data-ai-export-csv]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const section = btn.closest(".ai-component, .ai-report-header");
+        if (!section) return;
+        const script = section.querySelector("script[data-ai-csv]");
+        if (!script) return;
+        const csv = script.textContent;
+        const filename = script.getAttribute("data-ai-csv-name") || "report.csv";
+        const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        btn.classList.add("copied");
+        setTimeout(() => btn.classList.remove("copied"), 1200);
       });
     });
 
@@ -2844,6 +3228,8 @@
     currentLocale = resolveLocale(options.locale || docLang);
     installStyles();
     document.body.classList.add("ai-output-body");
+    if (options.numbering === false) document.body.classList.add("ai-no-numbers");
+    if (options.summary === false) document.body.classList.add("ai-no-summary");
     if (options.theme === "dark" || options.theme === "light") {
       document.documentElement.setAttribute("data-ai-theme", options.theme);
     }
@@ -2879,6 +3265,9 @@
       </div>
     `;
     bindInteractions(target);
+    if (options.summary !== false) injectExecutiveSummary(target);
+    bindTocHighlight(target);
+    bindHeadingAnchors(target);
     const sourcePanel = target.querySelector("[data-ai-source-panel]");
     const toggleSourceBtn = target.querySelector("[data-ai-toggle-source]");
     toggleSourceBtn.addEventListener("click", () => {

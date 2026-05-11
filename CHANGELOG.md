@@ -2,6 +2,34 @@
 
 All notable changes to AI Output Runtime are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## v0.4.1 — 2026-05-11
+
+Reader-experience patch on top of v0.4.0. No schema changes; all features additive.
+
+### Added
+
+- **Executive Summary auto-card.** When a document contains a `callout` and/or a `trend-card` / `metric-cards` block, the runtime now injects a collapsible "Executive Summary" card right after the report-header (or at the top if absent). Pulls the first callout's title + body excerpt and the first 4 metric labels/values. Toggle button collapses the body. Suppress with frontmatter `summary: off`.
+- **Sticky TOC + active section highlight.** On viewports ≥ 1200px the right-rail TOC is now sticky and uses `IntersectionObserver` to highlight the section currently in view (border-left + accent color). Below 1200px the TOC stays hidden as before.
+- **Section anchor links.** Hovering an h1/h2/h3 reveals a `#` icon. Clicking it copies the section URL to clipboard, updates the address bar via `history.replaceState`, and briefly flashes green. Hidden in print.
+- **CSV export buttons** on `table`, `chart`, `trend-card`, `status-grid`, `action-items`, `comparison`, `gauge`, `funnel`, `waterfall`, `heatmap`. Each component now ships an inline `<script type="text/csv" data-ai-csv>` payload; the header bar `⤓ CSV` button serializes it via Blob + `a.download`, prepending a UTF-8 BOM so Excel handles non-ASCII labels. Suppressed in print.
+- **Numbering toggle** via frontmatter `numbering: off` (or `false`/`no`). Hides the sequential chip before component headers — useful when sections are already H2-numbered or when the report is short. Pads the header back to the normal inset.
+- **Print/PDF polish:**
+  - `@page { size: A4; margin: 18mm 16mm 22mm 16mm }` — proper margins for cover + content pages.
+  - `report-header` becomes a real cover page (`page-break-after: always`, min-height ≈ viewport).
+  - Each top-level H1 starts a new page (except the first, and except the one right after report-header).
+  - Topbar, source panel, toc, search input, code-block Copy button, CSV button, and executive summary are hidden in print.
+  - Dark theme is forced to light in print; report-header chips remap to print-safe colors; sequence chip hidden.
+  - Component cards break-inside-avoid so charts and tables don't split awkwardly.
+
+### Changed
+
+- Top-bar button row now leads with the new **Skim** toggle (was added in v0.4.0 but kept its previous slot for compatibility).
+- `assets/lang/index.json` regenerated against `v0.4.1` runtime.
+
+### Compatibility
+
+- All v0.4.0 markdown renders unchanged. CDN-pinned `@v0.4.0` URLs continue to serve their original bytes.
+
 ## v0.4.0 — 2026-05-11
 
 A major shape expansion: 11 new candidate components covering business-report scenarios (weekly/monthly/quarterly reviews, postmortems, KPI dashboards, finance bridges, conversion analysis, prioritization), a modular language pack architecture for code-block syntax highlighting, and reader-experience upgrades. Backward-compatible: every v0.2.x markdown renders unchanged.

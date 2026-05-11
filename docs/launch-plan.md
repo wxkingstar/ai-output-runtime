@@ -11,7 +11,7 @@ All copy is in [`docs/launch-kit.md`](launch-kit.md). All screenshots are in [`d
 | Task | Owner | Outcome |
 |---|---|---|
 | Verify [live demo](https://wxkingstar.github.io/ai-output-runtime/) loads in light + dark | self | green |
-| Verify CDN URL `@v0.4.0` returns 200 with new code | self | green |
+| Verify CDN URL `@v0.4.1` returns 200 with new code | self | green |
 | Stage Hacker News title + body in [`launch-kit.md`](launch-kit.md) | self | ready |
 | Stage X / 𝕏 thread (4 posts max) | self | ready |
 | Stage Reddit r/ClaudeCode reply (under the original Thariq discussion thread) | self | ready |
@@ -124,7 +124,7 @@ These are people directly relevant to the project's origin story. Tag them only 
 | GitHub stars | | | | 250+ |
 | Repo forks | | | | 15+ |
 | `npx skills add` installs (via skill registry analytics if available) | | | | 100+ |
-| jsDelivr CDN hits / day on `@v0.4.0` | | | | 1000+ |
+| jsDelivr CDN hits / day on `@v0.4.1` | | | | 1000+ |
 | HN frontpage time (hours) | | | | 4h+ |
 | Product Hunt ranking (end of day) | | | | top 5 |
 | GitHub Pages unique visitors | | | | 2000+ |
@@ -170,7 +170,7 @@ These are aspirational, not pass/fail. Use them to detect channels that under-de
 ## Pre-launch checklist (run on D-1)
 
 - [ ] [Live demo](https://wxkingstar.github.io/ai-output-runtime/) loads in light + dark
-- [ ] [CDN URL @v0.4.0](https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.0/assets/ai-output-runtime.js) returns 200 with `CHART_TYPES` in body
+- [ ] [CDN URL @v0.4.1](https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.1/assets/ai-output-runtime.js) returns 200 with `CHART_TYPES` in body
 - [ ] `npx skills add wxkingstar/ai-output-runtime -g -y` works in a fresh Claude Code session
 - [ ] README in three languages all link to each other correctly
 - [ ] All screenshots in `docs/screenshots/` are committed and accessible via GitHub raw URL

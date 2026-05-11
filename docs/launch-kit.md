@@ -10,7 +10,7 @@ Ready-to-paste copy for every launch channel. The **sequencing** lives in [`laun
 - **One-liner**: A safe middle path between Markdown and AI-generated HTML for LLM reports.
 - **Repo**: https://github.com/wxkingstar/ai-output-runtime
 - **Live demo**: https://wxkingstar.github.io/ai-output-runtime/
-- **CDN**: https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.0/assets/ai-output-runtime.js
+- **CDN**: https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.1/assets/ai-output-runtime.js
 - **Install (as agent skill)**: `npx skills add wxkingstar/ai-output-runtime -g -y`
 - **Hero screenshot**: `docs/screenshots/landing-light.png`
 - **Charts showcase**: `docs/screenshots/charts-light.png`
@@ -306,7 +306,7 @@ Agent 写 CommonMark Markdown + 四个 schema 校验过的 JSON 块：
 ~38 KB，零依赖，纯 SVG 图表，明暗双主题（跟随系统或属性强制），多语言（中英内置），打印友好。
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.0/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.1/assets/ai-output-runtime.js"></script>
 ```
 
 也可以 inline 完全离线：`npx aio render report.md --inline-runtime`。
@@ -410,7 +410,7 @@ https://simonwillison.net/2026/May/8/unreasonable-effectiveness-of-html/
 約 38 KB、依存ゼロ、純粋な SVG チャート、ライト / ダーク両テーマ、多言語（英語と中国語を同梱）、印刷対応。
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.0/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.1/assets/ai-output-runtime.js"></script>
 ```
 
 完全オフラインなら inline 可能: `npx aio render report.md --inline-runtime`。

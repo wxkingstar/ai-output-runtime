@@ -9,7 +9,7 @@ const MAX_TEXT_LENGTH = 600;
 const MAX_ROWS = 100;
 const MAX_COLUMNS = 12;
 const MAX_METRICS = 8;
-const RUNTIME_VERSION = "v0.4.0";
+const RUNTIME_VERSION = "v0.4.1";
 const DEFAULT_RUNTIME_URL = `https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@${RUNTIME_VERSION}/assets/ai-output-runtime.js`;
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const BUNDLED_RUNTIME_PATH = resolve(SCRIPT_DIR, "../assets/ai-output-runtime.js");
@@ -582,14 +582,24 @@ function frontmatterToReportHeader(fm) {
   return data.title ? data : null;
 }
 
+function frontmatterBooleanOff(value) {
+  if (value === undefined) return null;
+  const s = String(value).toLowerCase();
+  if (s === "off" || s === "false" || s === "no" || s === "0") return false;
+  if (s === "on" || s === "true" || s === "yes" || s === "1") return true;
+  return null;
+}
+
 function applyFrontmatter(markdown) {
   const { frontmatter, body } = extractFrontmatter(markdown);
-  if (!frontmatter) return markdown;
+  if (!frontmatter) return { markdown, frontmatter: null };
   const headerData = frontmatterToReportHeader(frontmatter);
-  if (!headerData) return body;
-  if (/```aio:report-header@1/.test(body)) return body;
-  const block = "```aio:report-header@1\n" + JSON.stringify(headerData, null, 2) + "\n```\n\n";
-  return block + body;
+  let finalBody = body;
+  if (headerData && !/```aio:report-header@1/.test(body)) {
+    const block = "```aio:report-header@1\n" + JSON.stringify(headerData, null, 2) + "\n```\n\n";
+    finalBody = block + body;
+  }
+  return { markdown: finalBody, frontmatter };
 }
 
 function validateMarkdown(markdown) {
@@ -694,7 +704,9 @@ async function standaloneHtml(markdown, runtime, outPath, opts) {
     title: "AI Output Runtime v0.1",
     locale,
     theme: theme || undefined,
-    langBaseUrl: opts.langBaseUrl || undefined
+    langBaseUrl: opts.langBaseUrl || undefined,
+    numbering: opts.numbering === false ? false : undefined,
+    summary: opts.summary === false ? false : undefined
   });
   return `<!doctype html>
 <html lang="${escapeHtmlAttr(lang)}"${themeAttr}>
@@ -756,7 +768,7 @@ async function main() {
     console.error(`${file}: input exceeds ${MAX_INPUT_BYTES} bytes`);
     process.exit(1);
   }
-  const markdown = applyFrontmatter(raw);
+  const { markdown, frontmatter } = applyFrontmatter(raw);
   const diagnostics = validateMarkdown(markdown);
 
   if (diagnostics.length) {
@@ -802,7 +814,13 @@ async function main() {
 
   const resolvedOut = resolve(outPath);
   await mkdir(dirname(resolvedOut), { recursive: true });
-  const html = await standaloneHtml(markdown, runtime, resolvedOut, { lang, theme: themeFlag, langBaseUrl });
+  const numbering = frontmatter ? frontmatterBooleanOff(frontmatter.numbering) : null;
+  const summary = frontmatter ? frontmatterBooleanOff(frontmatter.summary) : null;
+  const html = await standaloneHtml(markdown, runtime, resolvedOut, {
+    lang, theme: themeFlag, langBaseUrl,
+    numbering: numbering === false ? false : undefined,
+    summary: summary === false ? false : undefined
+  });
   await writeFile(resolvedOut, html, "utf8");
   console.log(`Rendered ${outPath}`);
 }
