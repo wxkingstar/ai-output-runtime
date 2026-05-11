@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { dirname, resolve, basename, extname, isAbsolute, relative } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const AIO_INFO_RE = /^aio:([a-z][a-z0-9-]*)@([1-9][0-9]*)(?:\.([0-9]+))?$/;
 const MAX_TEXT_LENGTH = 600;
 const MAX_ROWS = 100;
 const MAX_COLUMNS = 12;
 const MAX_METRICS = 8;
+const RUNTIME_VERSION = "v0.1.0";
+const DEFAULT_RUNTIME_URL = `https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@${RUNTIME_VERSION}/assets/ai-output-runtime.js`;
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+const BUNDLED_RUNTIME_PATH = resolve(SCRIPT_DIR, "../assets/ai-output-runtime.js");
 
 function parseBlocks(markdown) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
@@ -135,14 +140,32 @@ function escapeScriptText(value) {
   return String(value).replace(/<\/script/gi, "<\\/script");
 }
 
-function standaloneHtml(markdown) {
+function isRemoteUrl(value) {
+  return /^https?:\/\//i.test(value);
+}
+
+async function buildRuntimeTag(runtime, outPath) {
+  if (runtime.inline) {
+    const code = await readFile(BUNDLED_RUNTIME_PATH, "utf8");
+    return `<script>${escapeScriptText(code)}</script>`;
+  }
+  if (isRemoteUrl(runtime.src)) {
+    return `<script src="${runtime.src}"></script>`;
+  }
+  const absSrc = isAbsolute(runtime.src) ? runtime.src : resolve(process.cwd(), runtime.src);
+  const rel = relative(dirname(outPath), absSrc).split("\\").join("/");
+  return `<script src="${rel || basename(absSrc)}"></script>`;
+}
+
+async function standaloneHtml(markdown, runtime, outPath) {
+  const runtimeTag = await buildRuntimeTag(runtime, outPath);
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AI Output Runtime</title>
-  <script src="../assets/ai-output-runtime.js"></script>
+  ${runtimeTag}
 </head>
 <body>
   <div id="app"></div>
@@ -158,10 +181,35 @@ function standaloneHtml(markdown) {
 `;
 }
 
+function parseFlag(rest, name) {
+  const idx = rest.indexOf(name);
+  if (idx < 0) return undefined;
+  const value = rest[idx + 1];
+  if (value === undefined || value.startsWith("--")) {
+    return "";
+  }
+  return value;
+}
+
+function hasFlag(rest, name) {
+  return rest.includes(name);
+}
+
+function printUsage() {
+  console.error(`Usage:
+  aio validate <file.md>
+  aio render   <file.md> [--out <file.html>] [--runtime <url|path>] [--inline-runtime]
+
+render options:
+  --out <file.html>      Output HTML path (default: <input>.html alongside input)
+  --runtime <url|path>   Runtime <script src>. Default: jsDelivr CDN pinned to ${RUNTIME_VERSION}
+  --inline-runtime       Inline the bundled runtime so the HTML works offline / via file://`);
+}
+
 async function main() {
   const [, , command, file, ...rest] = process.argv;
   if (!command || !file || !["validate", "render"].includes(command)) {
-    console.error("Usage: aio validate <file.md> | aio render <file.md> --out <file.html>");
+    printUsage();
     process.exit(2);
   }
 
@@ -181,16 +229,24 @@ async function main() {
     return;
   }
 
-  const outIndex = rest.indexOf("--out");
-  const outPath = outIndex >= 0 ? rest[outIndex + 1] : "";
-  if (!outPath) {
-    console.error("render requires --out <file.html>");
+  const explicitOut = parseFlag(rest, "--out");
+  const outPath = explicitOut || inputPath.replace(new RegExp(`${extname(inputPath)}$`), "") + ".html";
+
+  const runtimeOverride = parseFlag(rest, "--runtime");
+  const inline = hasFlag(rest, "--inline-runtime");
+  if (inline && runtimeOverride) {
+    console.error("--inline-runtime cannot be combined with --runtime");
     process.exit(2);
   }
+  const runtime = {
+    inline,
+    src: runtimeOverride || DEFAULT_RUNTIME_URL
+  };
 
   const resolvedOut = resolve(outPath);
   await mkdir(dirname(resolvedOut), { recursive: true });
-  await writeFile(resolvedOut, standaloneHtml(markdown), "utf8");
+  const html = await standaloneHtml(markdown, runtime, resolvedOut);
+  await writeFile(resolvedOut, html, "utf8");
   console.log(`Rendered ${outPath}`);
 }
 

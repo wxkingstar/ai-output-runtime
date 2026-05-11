@@ -80,7 +80,17 @@ The second command should fail because HTML is not allowed in AIO string fields.
 ## Render
 
 ```bash
+# Default: writes valid-v0.1.html next to the source, runtime via jsDelivr CDN
+node scripts/aio.mjs render examples/valid-v0.1.md
+
+# Pick an output path
 node scripts/aio.mjs render examples/valid-v0.1.md --out dist/valid.html
+
+# Inline the runtime so the HTML works offline / via file://
+node scripts/aio.mjs render examples/report-demo.md --inline-runtime --out dist/report-demo.html
+
+# Point at a different runtime source (custom CDN or local path)
+node scripts/aio.mjs render report.md --runtime ./assets/ai-output-runtime.js
 ```
 
 ## AIO Example

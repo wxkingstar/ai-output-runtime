@@ -73,13 +73,31 @@ Validate a Markdown file:
 node SKILL_DIR/scripts/aio.mjs validate report.md
 ```
 
-Render a Markdown file:
+Render a Markdown file. `--out` is optional and defaults to `report.html` next to the source:
 
 ```bash
-node SKILL_DIR/scripts/aio.mjs render report.md --out report.html
+node SKILL_DIR/scripts/aio.mjs render report.md
 ```
 
-Use `SKILL_DIR/assets/ai-output-runtime.js` as the browser runtime when generating an HTML preview.
+By default the rendered HTML references the runtime via jsDelivr CDN, so the file is portable:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.1.0/assets/ai-output-runtime.js"></script>
+```
+
+For an offline / `file://`-friendly artifact, inline the runtime:
+
+```bash
+node SKILL_DIR/scripts/aio.mjs render report.md --inline-runtime
+```
+
+Override the runtime source (custom CDN or local path) when needed:
+
+```bash
+node SKILL_DIR/scripts/aio.mjs render report.md --runtime ./assets/ai-output-runtime.js
+```
+
+Prefer the CDN or `--inline-runtime` over copying `SKILL_DIR/assets/ai-output-runtime.js` by hand.
 
 ## When Writing Reports
 
