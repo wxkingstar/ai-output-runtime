@@ -1,0 +1,9 @@
+让 AI 写业务报告，但不让它写 HTML。
+
+第三条路：AI 只输出 Markdown + JSON 数据块，28KB runtime 安全渲染。15 个组件搞定周报/月报/复盘/KPI/OKR/财务 P&L/销售漏斗/风险矩阵。
+
+装到 Claude Code / Codex / Cursor：
+npx skills add wxkingstar/ai-output-runtime -g -y
+
+Demo: https://wxkingstar.github.io/ai-output-runtime/
+GitHub: https://github.com/wxkingstar/ai-output-runtime

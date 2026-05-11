@@ -1,0 +1,8 @@
+Open source, MIT. The demo page is itself an AIO doc — click "View source" to see the Markdown.
+
+Demo: https://wxkingstar.github.io/ai-output-runtime/
+
+Install (Claude Code / Codex / Cursor):
+npx skills add wxkingstar/ai-output-runtime -g -y
+
+Repo: https://github.com/wxkingstar/ai-output-runtime

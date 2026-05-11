@@ -1,0 +1,9 @@
+AI にレポートを書かせたい。でも HTML は怖い、Markdown は貧弱。第 3 の道を作りました。
+
+AI は Markdown + JSON ブロックだけ。28KB のランタイムが描画。HTML/CSS/JS は一切書かせません。
+
+v0.4：15 コンポーネント（ゲージ / ファネル / P&L / ヒートマップ / 2×2 行列 / タイムライン 等）+ 30 言語シンタックスハイライト。
+
+npx skills add wxkingstar/ai-output-runtime -g -y
+
+https://github.com/wxkingstar/ai-output-runtime

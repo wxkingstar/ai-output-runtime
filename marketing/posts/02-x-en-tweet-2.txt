@@ -1,0 +1,9 @@
+The debate that triggered this:
+
+"AI should output HTML" — can do funnels, charts, layout.
+But model-emitted <script>/<style>/<iframe> is unsafe.
+
+"AI should output Markdown" — safe.
+But can't render a 2×2 risk matrix or a P&L bridge.
+
+Both sides have a point.

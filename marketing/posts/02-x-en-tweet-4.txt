@@ -1,0 +1,12 @@
+A trend-card block is this short:
+
+```aio:trend-card@1
+{"items":[{
+ "label":"GMV","value":12345678,
+ "format":"currency:CNY",
+ "delta":{"value":0.083,"direction":"up"},
+ "spark":[9,10,11,12,13]
+}]}
+```
+
+Renders ¥12,345,678.00 ▲ 8.3% + sparkline. AI fills JSON, runtime renders.

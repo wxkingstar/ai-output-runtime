@@ -1,0 +1,5 @@
+I gave Claude 15 report components without letting it write a single line of HTML.
+
+It writes Markdown + a few schema-checked JSON blocks. A 28 KB runtime renders them. Result: KPI gauges, P&L bridges, sales funnels, risk matrices — and zero prompt-injection surface.
+
+🧵

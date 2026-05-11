@@ -693,6 +693,41 @@ function safeLang(lang) {
   return lang;
 }
 
+function safeOgUrl(value) {
+  if (!value) return "";
+  if (!/^https?:\/\/[^\s"'`<>]+$/.test(value)) return "";
+  return value;
+}
+
+function buildOgTags(opts) {
+  const tags = [];
+  const title = opts.ogTitle || "";
+  const description = opts.ogDescription || "";
+  const image = safeOgUrl(opts.ogImage);
+  const url = safeOgUrl(opts.ogUrl);
+  if (title) {
+    tags.push(`<meta property="og:title" content="${escapeHtmlAttr(title)}">`);
+    tags.push(`<meta name="twitter:title" content="${escapeHtmlAttr(title)}">`);
+  }
+  if (description) {
+    tags.push(`<meta name="description" content="${escapeHtmlAttr(description)}">`);
+    tags.push(`<meta property="og:description" content="${escapeHtmlAttr(description)}">`);
+    tags.push(`<meta name="twitter:description" content="${escapeHtmlAttr(description)}">`);
+  }
+  if (image) {
+    tags.push(`<meta property="og:image" content="${escapeHtmlAttr(image)}">`);
+    tags.push(`<meta name="twitter:image" content="${escapeHtmlAttr(image)}">`);
+    tags.push(`<meta name="twitter:card" content="summary_large_image">`);
+  }
+  if (url) {
+    tags.push(`<meta property="og:url" content="${escapeHtmlAttr(url)}">`);
+  }
+  if (title || description || image) {
+    tags.push(`<meta property="og:type" content="website">`);
+  }
+  return tags.length ? "\n  " + tags.join("\n  ") : "";
+}
+
 async function standaloneHtml(markdown, runtime, outPath, opts) {
   const runtimeTag = await buildRuntimeTag(runtime, outPath, markdown);
   const lang = safeLang(opts.lang);
@@ -708,12 +743,13 @@ async function standaloneHtml(markdown, runtime, outPath, opts) {
     numbering: opts.numbering === false ? false : undefined,
     summary: opts.summary === false ? false : undefined
   });
+  const ogTags = buildOgTags(opts);
   return `<!doctype html>
 <html lang="${escapeHtmlAttr(lang)}"${themeAttr}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AI Output Runtime</title>
+  <title>AI Output Runtime</title>${ogTags}
   ${runtimeTag}
 </head>
 <body>
@@ -812,6 +848,17 @@ async function main() {
     }
   }
 
+  const ogTitle = parseFlag(rest, "--og-title");
+  const ogDescription = parseFlag(rest, "--og-description");
+  const ogImage = parseFlag(rest, "--og-image");
+  const ogUrl = parseFlag(rest, "--og-url");
+  for (const [name, value] of [["--og-image", ogImage], ["--og-url", ogUrl]]) {
+    if (value && !/^https?:\/\/[^\s"'`<>]+$/.test(value)) {
+      console.error(`${name} must be an http(s):// URL with no whitespace or quotes`);
+      process.exit(2);
+    }
+  }
+
   const resolvedOut = resolve(outPath);
   await mkdir(dirname(resolvedOut), { recursive: true });
   const numbering = frontmatter ? frontmatterBooleanOff(frontmatter.numbering) : null;
@@ -819,7 +866,8 @@ async function main() {
   const html = await standaloneHtml(markdown, runtime, resolvedOut, {
     lang, theme: themeFlag, langBaseUrl,
     numbering: numbering === false ? false : undefined,
-    summary: summary === false ? false : undefined
+    summary: summary === false ? false : undefined,
+    ogTitle, ogDescription, ogImage, ogUrl
   });
   await writeFile(resolvedOut, html, "utf8");
   console.log(`Rendered ${outPath}`);

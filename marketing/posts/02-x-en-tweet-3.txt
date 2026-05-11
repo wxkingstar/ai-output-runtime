@@ -1,0 +1,5 @@
+The third path:
+
+AI writes Markdown + fenced JSON blocks. Runtime renders them. The model never touches HTML, CSS, JS, iframes, or event handlers.
+
+v0.4 ships 15 components: trend-card, gauge, funnel, waterfall, heatmap, matrix, timeline, action-items, comparison.

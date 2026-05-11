@@ -1,0 +1,1 @@
+Show HN: AIO – a Markdown contract for AI reports (charts, funnels, no HTML)
