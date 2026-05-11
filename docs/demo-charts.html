@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1267,75 +1267,97 @@
 </head>
 <body>
   <div id="app"></div>
-  <script id="ai-source" type="text/plain"># AIO v0.1 渲染效果测试
+  <script id="ai-source" type="text/plain"># Chart Showcase
 
-下面是一份示例报告，演示 AI Output Runtime 三个稳定组件（metric-cards、callout、table）在 Markdown 中的混排效果。
+A walkthrough of every `aio:chart@1` variant. This component is a **candidate** in v0.2 — schema is final, may receive optional fields before promotion to stable.
 
-```aio:metric-cards@1
+## Line — multi-series trend
+
+```aio:chart@1
 {
-  "items": [
-    {
-      "label": "规范版本",
-      "value": "AIO v0.1",
-      "note": "稳定核心三件套",
-      "tone": "good"
-    },
-    {
-      "label": "组件数量",
-      "value": "3",
-      "note": "table / metric-cards / callout",
-      "tone": "neutral"
-    },
-    {
-      "label": "JSON 校验",
-      "value": "Pass",
-      "note": "无注释、无尾逗号",
-      "tone": "good"
-    },
-    {
-      "label": "安全约束",
-      "value": "Strict",
-      "note": "禁用 HTML / JS / 模板表达式",
-      "tone": "warn"
-    }
+  "type": "line",
+  "title": "Monthly active users",
+  "subtitle": "Q1 2026",
+  "yLabel": "MAU (k)",
+  "x": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+  "series": [
+    { "name": "Product A", "data": [120, 145, 162, 175, 198, 230] },
+    { "name": "Product B", "data": [80, 95, 110, 132, 158, 184], "tone": "good" },
+    { "name": "Target", "data": [150, 150, 175, 175, 200, 200], "tone": "accent" }
   ]
 }
 ```
 
-## 组件对比
+## Bar — grouped comparison
 
-下表比较纯 Markdown 与 AIO 块在结构化场景中的差异。
-
-```aio:table@1
+```aio:chart@1
 {
-  "columns": ["维度", "纯 Markdown", "AIO 块"],
-  "rows": [
-    ["可读性", "高", "高（JSON 略冗长）"],
-    ["结构化渲染", "弱", "强（runtime 解析）"],
-    ["类型校验", "无", "有（aio.mjs validate）"],
-    ["交互能力", "无", "有限（取决于 runtime 版本）"],
-    ["适用场景", "叙述、解释", "指标、对比、风险面板"]
+  "type": "bar",
+  "title": "Revenue by region",
+  "subtitle": "Q1 vs Q2 2026",
+  "yLabel": "USD (M)",
+  "x": ["NA", "EU", "APAC", "LATAM"],
+  "series": [
+    { "name": "Q1", "data": [12.4, 8.1, 6.5, 2.3] },
+    { "name": "Q2", "data": [13.2, 9.0, 7.8, 2.9] }
   ]
 }
 ```
 
-## 使用建议
+## Area — cumulative trend
 
-- 默认写 CommonMark，只在结构化展示有价值时使用 AIO 块。
-- info string 必须严格写成 `aio:name@major`，body 必须是合法 JSON。
-- 字符串字段不能包含 `<` 或 `>`，避免被误判为 HTML。
-- 不确定是否需要组件时，直接退回到 Markdown。
+```aio:chart@1
+{
+  "type": "area",
+  "title": "Cumulative signups",
+  "x": ["W1", "W2", "W3", "W4", "W5", "W6"],
+  "series": [
+    { "name": "Signups", "data": [120, 280, 470, 690, 920, 1180] }
+  ]
+}
+```
+
+## Pie — revenue mix
+
+```aio:chart@1
+{
+  "type": "pie",
+  "title": "Revenue mix Q1",
+  "slices": [
+    { "label": "EC", "value": 1200 },
+    { "label": "Brand", "value": 800 },
+    { "label": "Global", "value": 450 },
+    { "label": "Other", "value": 180 }
+  ]
+}
+```
+
+## Donut — cost structure
+
+```aio:chart@1
+{
+  "type": "donut",
+  "title": "Cost structure",
+  "subtitle": "FY26 actuals",
+  "slices": [
+    { "label": "Logistics", "value": 42, "tone": "warn" },
+    { "label": "Marketing", "value": 28 },
+    { "label": "Ops", "value": 18 },
+    { "label": "R&D", "value": 12 }
+  ]
+}
+```
 
 ```aio:callout@1
 {
-  "tone": "success",
-  "title": "结论",
-  "body": "AIO v0.1 适合作为结构化 AI 报告的输出契约：稳定三件套覆盖了指标、对比、提示三类高频场景，其余内容保留为标准 Markdown 即可。"
+  "tone": "info",
+  "title": "What charts do not include",
+  "body": "By design, AIO chart blocks accept data only: no formatter callbacks, no colour overrides, no stacked variants, no annotations, no interactivity. If a report needs those, fall back to a plain Markdown table with the underlying numbers, or use a separate visualization tool."
 }
 ```
 </script>
   <script>
-    AIOutputRuntime.render(document.getElementById("ai-source").textContent.trim(), {"target":"#app","title":"AI Output Runtime v0.1","locale":"zh-CN"});
+    AIOutputRuntime.render(document.getElementById("ai-source").textContent.trim(), {"target":"#app","title":"AI Output Runtime v0.1","locale":"en"});
   </script>
 </body>
 </html>

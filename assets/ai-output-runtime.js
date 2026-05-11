@@ -16,6 +16,8 @@
       defaultTableTitle: "Data table",
       defaultTableSubtitle: "Source: Markdown fenced code block",
       defaultMetricsLabel: "Summary metrics",
+      defaultChartTitle: "Chart",
+      totalLabel: "Total",
       toc: "Contents",
       copySource: "Copy source",
       viewSource: "View source",
@@ -32,6 +34,8 @@
       defaultTableTitle: "数据表",
       defaultTableSubtitle: "源数据来自 Markdown fenced code block",
       defaultMetricsLabel: "摘要指标",
+      defaultChartTitle: "图表",
+      totalLabel: "合计",
       toc: "目录",
       copySource: "复制源稿",
       viewSource: "查看源稿",
@@ -77,6 +81,12 @@
       --ai-red: #dc2626;
       --ai-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
       --ai-topbar-bg: rgba(244, 246, 248, 0.92);
+      --ai-chart-1: #2563eb;
+      --ai-chart-2: #16a34a;
+      --ai-chart-3: #f97316;
+      --ai-chart-4: #8b5cf6;
+      --ai-chart-5: #ec4899;
+      --ai-chart-6: #06b6d4;
       color-scheme: light;
     }
 
@@ -96,6 +106,12 @@
         --ai-red: #f87171;
         --ai-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
         --ai-topbar-bg: rgba(15, 23, 42, 0.92);
+        --ai-chart-1: #60a5fa;
+        --ai-chart-2: #4ade80;
+        --ai-chart-3: #fb923c;
+        --ai-chart-4: #a78bfa;
+        --ai-chart-5: #f472b6;
+        --ai-chart-6: #22d3ee;
         color-scheme: dark;
       }
     }
@@ -115,6 +131,12 @@
       --ai-red: #f87171;
       --ai-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
       --ai-topbar-bg: rgba(15, 23, 42, 0.92);
+      --ai-chart-1: #60a5fa;
+      --ai-chart-2: #4ade80;
+      --ai-chart-3: #fb923c;
+      --ai-chart-4: #a78bfa;
+      --ai-chart-5: #f472b6;
+      --ai-chart-6: #22d3ee;
       color-scheme: dark;
     }
 
@@ -508,6 +530,30 @@
       .ai-document > h1:first-child { padding: 20px; }
     }
 
+    .ai-chart-wrap { padding: 14px 14px 4px; }
+    .ai-chart-svg { display: block; width: 100%; height: auto; max-height: 380px; }
+    .ai-chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      padding: 10px 14px 14px;
+      font-size: 12px;
+      color: var(--ai-muted);
+    }
+    .ai-chart-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .ai-chart-swatch {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .ai-chart-caption {
+      padding: 0 14px 14px;
+      font-size: 12px;
+      color: var(--ai-muted);
+    }
+
     @media print {
       :root, :root[data-ai-theme="dark"] {
         --ai-bg: #ffffff;
@@ -735,6 +781,265 @@
     }
   }
 
+  const CHART_TYPES = ["line", "bar", "area", "pie", "donut"];
+  const CHART_TONES = ["neutral", "good", "warn", "bad", "accent"];
+  const MAX_CHART_X = 50;
+  const MAX_CHART_SERIES = 6;
+  const MAX_CHART_SLICES = 12;
+
+  function requireFiniteNumber(value, name) {
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new Error(`${name} must be a finite number`);
+  }
+
+  function validateChart(data) {
+    rejectUnknownKeys(
+      data,
+      ["type", "title", "subtitle", "caption", "xLabel", "yLabel", "x", "series", "slices"],
+      "chart"
+    );
+    if (!data || typeof data.type !== "string" || !CHART_TYPES.includes(data.type)) {
+      throw new Error(`chart.type must be one of: ${CHART_TYPES.join(", ")}`);
+    }
+    if (data.title) requirePlainText(data.title, "chart.title", 100);
+    if (data.subtitle) requirePlainText(data.subtitle, "chart.subtitle", 160);
+    if (data.caption) requirePlainText(data.caption, "chart.caption", 180);
+    if (data.xLabel) requirePlainText(data.xLabel, "chart.xLabel", 40);
+    if (data.yLabel) requirePlainText(data.yLabel, "chart.yLabel", 40);
+
+    const isPie = data.type === "pie" || data.type === "donut";
+    if (isPie) {
+      if (data.x !== undefined || data.series !== undefined) {
+        throw new Error("chart of type pie/donut must not include x or series");
+      }
+      requireArray(data.slices, "chart.slices");
+      if (data.slices.length < 1 || data.slices.length > MAX_CHART_SLICES) {
+        throw new Error(`chart.slices must contain 1-${MAX_CHART_SLICES} entries`);
+      }
+      let hasPositive = false;
+      data.slices.forEach((slice, index) => {
+        rejectUnknownKeys(slice, ["label", "value", "tone"], `chart.slices[${index}]`);
+        requirePlainText(slice.label, `chart.slices[${index}].label`, 80);
+        requireFiniteNumber(slice.value, `chart.slices[${index}].value`);
+        if (slice.value < 0) throw new Error(`chart.slices[${index}].value must be non-negative`);
+        if (slice.value > 0) hasPositive = true;
+        if (slice.tone && !CHART_TONES.includes(slice.tone)) {
+          throw new Error(`chart.slices[${index}].tone must be one of: ${CHART_TONES.join(", ")}`);
+        }
+      });
+      if (!hasPositive) throw new Error("chart.slices must contain at least one slice with value > 0");
+      return;
+    }
+
+    if (data.slices !== undefined) {
+      throw new Error("chart of type line/bar/area must not include slices");
+    }
+    requireArray(data.x, "chart.x");
+    if (data.x.length < 1 || data.x.length > MAX_CHART_X) {
+      throw new Error(`chart.x must contain 1-${MAX_CHART_X} entries`);
+    }
+    data.x.forEach((label, index) => requirePlainText(label, `chart.x[${index}]`, 40));
+
+    requireArray(data.series, "chart.series");
+    if (data.series.length < 1 || data.series.length > MAX_CHART_SERIES) {
+      throw new Error(`chart.series must contain 1-${MAX_CHART_SERIES} entries`);
+    }
+    data.series.forEach((s, index) => {
+      rejectUnknownKeys(s, ["name", "data", "tone"], `chart.series[${index}]`);
+      requirePlainText(s.name, `chart.series[${index}].name`, 80);
+      requireArray(s.data, `chart.series[${index}].data`);
+      if (s.data.length !== data.x.length) {
+        throw new Error(`chart.series[${index}].data must have length ${data.x.length} (matching chart.x)`);
+      }
+      s.data.forEach((v, j) => requireFiniteNumber(v, `chart.series[${index}].data[${j}]`));
+      if (s.tone && !CHART_TONES.includes(s.tone)) {
+        throw new Error(`chart.series[${index}].tone must be one of: ${CHART_TONES.join(", ")}`);
+      }
+    });
+  }
+
+  function chartColor(index, tone) {
+    if (tone === "good") return "var(--ai-green)";
+    if (tone === "warn") return "var(--ai-yellow)";
+    if (tone === "bad") return "var(--ai-red)";
+    if (tone === "accent") return "var(--ai-accent)";
+    return `var(--ai-chart-${(index % 6) + 1})`;
+  }
+
+  function niceRange(min, max) {
+    if (min === max) {
+      if (min === 0) return { min: 0, max: 1, step: 0.25, ticks: 5 };
+      const pad = Math.abs(min) * 0.1 || 1;
+      min -= pad; max += pad;
+    }
+    if (min > 0 && min / (max - min) > 0.4) min = 0;
+    if (max < 0 && Math.abs(max) / (max - min) > 0.4) max = 0;
+    const range = max - min;
+    const targetTicks = 5;
+    const rough = range / targetTicks;
+    const pow = Math.pow(10, Math.floor(Math.log10(rough)));
+    const norm = rough / pow;
+    let step;
+    if (norm < 1.5) step = 1 * pow;
+    else if (norm < 3) step = 2 * pow;
+    else if (norm < 7) step = 5 * pow;
+    else step = 10 * pow;
+    const niceMin = Math.floor(min / step) * step;
+    const niceMax = Math.ceil(max / step) * step;
+    const ticks = Math.round((niceMax - niceMin) / step) + 1;
+    return { min: niceMin, max: niceMax, step, ticks };
+  }
+
+  function formatTick(v) {
+    if (v === 0) return "0";
+    const abs = Math.abs(v);
+    if (abs >= 1e9) return (v / 1e9).toFixed(abs >= 1e10 ? 0 : 1).replace(/\.0$/, "") + "B";
+    if (abs >= 1e6) return (v / 1e6).toFixed(abs >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M";
+    if (abs >= 1e3) return (v / 1e3).toFixed(abs >= 1e4 ? 0 : 1).replace(/\.0$/, "") + "k";
+    if (abs >= 10) return v.toFixed(0);
+    if (abs >= 1) return v.toFixed(1).replace(/\.0$/, "");
+    return v.toFixed(2);
+  }
+
+  function truncateLabel(s, max) {
+    if (s.length <= max) return s;
+    return s.slice(0, max - 1) + "…";
+  }
+
+  function renderChartXY(data) {
+    const W = 640, H = 320;
+    const padL = 56, padR = 16, padT = 18, padB = 44;
+    const plotW = W - padL - padR;
+    const plotH = H - padT - padB;
+    const values = data.series.flatMap((s) => s.data);
+    const dataMin = Math.min(...values);
+    const dataMax = Math.max(...values);
+    const baselineMin = data.type === "bar" || data.type === "area" ? Math.min(0, dataMin) : dataMin;
+    const range = niceRange(baselineMin, dataMax);
+    const yScale = (v) => padT + plotH - ((v - range.min) / (range.max - range.min || 1)) * plotH;
+    const n = data.x.length;
+    const xScale = (i) => padL + (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
+    const bandWidth = n > 1 ? plotW / n : plotW;
+    const barGroupWidth = bandWidth * 0.7;
+    const barWidth = barGroupWidth / data.series.length;
+
+    const gridLines = [];
+    for (let i = 0; i < range.ticks; i++) {
+      const v = range.min + range.step * i;
+      const y = yScale(v);
+      gridLines.push(`<line x1="${padL}" y1="${y}" x2="${padL + plotW}" y2="${y}" stroke="var(--ai-line)" stroke-width="1" stroke-dasharray="${i === 0 ? "" : "3 3"}"/>`);
+      gridLines.push(`<text x="${padL - 6}" y="${y + 4}" text-anchor="end" font-size="11" fill="var(--ai-muted)">${escapeHtml(formatTick(v))}</text>`);
+    }
+
+    const maxXLabels = Math.min(n, 10);
+    const xStride = Math.ceil(n / maxXLabels);
+    const xTicks = data.x.map((label, i) => {
+      if (i % xStride !== 0 && i !== n - 1) return "";
+      const x = data.type === "bar" && n > 1 ? padL + (i + 0.5) * bandWidth : xScale(i);
+      return `<text x="${x}" y="${padT + plotH + 16}" text-anchor="middle" font-size="11" fill="var(--ai-muted)">${escapeHtml(truncateLabel(label, 10))}</text>`;
+    }).join("");
+
+    let seriesSvg = "";
+    if (data.type === "bar") {
+      data.series.forEach((s, sIdx) => {
+        const color = chartColor(sIdx, s.tone);
+        s.data.forEach((v, i) => {
+          const groupX = n === 1 ? padL + plotW / 2 - barGroupWidth / 2 : padL + i * bandWidth + (bandWidth - barGroupWidth) / 2;
+          const x = groupX + sIdx * barWidth;
+          const zero = yScale(Math.max(range.min, 0));
+          const y = yScale(v);
+          const top = Math.min(y, zero);
+          const height = Math.abs(y - zero);
+          seriesSvg += `<rect x="${x}" y="${top}" width="${Math.max(1, barWidth - 1)}" height="${height}" fill="${color}" rx="1"/>`;
+        });
+      });
+    } else if (data.type === "area") {
+      data.series.forEach((s, sIdx) => {
+        const color = chartColor(sIdx, s.tone);
+        const zero = yScale(Math.max(range.min, 0));
+        const pts = s.data.map((v, i) => `${xScale(i)},${yScale(v)}`);
+        const areaPath = `M ${xScale(0)},${zero} L ${pts.join(" L ")} L ${xScale(n - 1)},${zero} Z`;
+        seriesSvg += `<path d="${areaPath}" fill="${color}" fill-opacity="0.22" stroke="none"/>`;
+        seriesSvg += `<polyline points="${pts.join(" ")}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+        s.data.forEach((v, i) => {
+          seriesSvg += `<circle cx="${xScale(i)}" cy="${yScale(v)}" r="2.5" fill="${color}"/>`;
+        });
+      });
+    } else {
+      data.series.forEach((s, sIdx) => {
+        const color = chartColor(sIdx, s.tone);
+        const pts = s.data.map((v, i) => `${xScale(i)},${yScale(v)}`).join(" ");
+        seriesSvg += `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+        s.data.forEach((v, i) => {
+          seriesSvg += `<circle cx="${xScale(i)}" cy="${yScale(v)}" r="3" fill="${color}"/>`;
+        });
+      });
+    }
+
+    const yLabelSvg = data.yLabel
+      ? `<text x="${14}" y="${padT + plotH / 2}" text-anchor="middle" font-size="11" fill="var(--ai-muted)" transform="rotate(-90 14 ${padT + plotH / 2})">${escapeHtml(data.yLabel)}</text>`
+      : "";
+    const xLabelSvg = data.xLabel
+      ? `<text x="${padL + plotW / 2}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--ai-muted)">${escapeHtml(data.xLabel)}</text>`
+      : "";
+
+    const legend = data.series.length > 1
+      ? `<div class="ai-chart-legend">${data.series.map((s, i) => `<span class="ai-chart-legend-item"><span class="ai-chart-swatch" style="background:${chartColor(i, s.tone)}"></span>${escapeHtml(s.name)}</span>`).join("")}</div>`
+      : "";
+
+    return { svgBody: `${gridLines.join("")}${seriesSvg}${xTicks}${yLabelSvg}${xLabelSvg}`, viewBox: `0 0 ${W} ${H}`, legend };
+  }
+
+  function renderChartPie(data) {
+    const W = 360, H = 320;
+    const cx = 180, cy = 150;
+    const outerR = 110;
+    const innerR = data.type === "donut" ? 62 : 0;
+    const total = data.slices.reduce((acc, s) => acc + s.value, 0);
+    if (total <= 0) throw new Error("chart.slices total must be > 0");
+    let angle = -Math.PI / 2;
+    const arcs = data.slices.map((slice, idx) => {
+      const portion = slice.value / total;
+      if (portion <= 0) return "";
+      const sweep = portion * Math.PI * 2;
+      const a0 = angle;
+      const a1 = angle + sweep;
+      angle = a1;
+      const x0 = cx + Math.cos(a0) * outerR;
+      const y0 = cy + Math.sin(a0) * outerR;
+      const x1 = cx + Math.cos(a1) * outerR;
+      const y1 = cy + Math.sin(a1) * outerR;
+      const large = sweep > Math.PI ? 1 : 0;
+      const color = chartColor(idx, slice.tone);
+      if (portion >= 0.999) {
+        // single slice covering the full circle
+        return `<circle cx="${cx}" cy="${cy}" r="${outerR}" fill="${color}"/>`;
+      }
+      if (innerR > 0) {
+        const ix0 = cx + Math.cos(a0) * innerR;
+        const iy0 = cy + Math.sin(a0) * innerR;
+        const ix1 = cx + Math.cos(a1) * innerR;
+        const iy1 = cy + Math.sin(a1) * innerR;
+        return `<path d="M ${x0} ${y0} A ${outerR} ${outerR} 0 ${large} 1 ${x1} ${y1} L ${ix1} ${iy1} A ${innerR} ${innerR} 0 ${large} 0 ${ix0} ${iy0} Z" fill="${color}"/>`;
+      }
+      return `<path d="M ${cx} ${cy} L ${x0} ${y0} A ${outerR} ${outerR} 0 ${large} 1 ${x1} ${y1} Z" fill="${color}"/>`;
+    }).join("");
+    const centerText = data.type === "donut"
+      ? `<text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="13" fill="var(--ai-muted)">${escapeHtml(L("totalLabel"))}</text><text x="${cx}" y="${cy + 16}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--ai-ink)">${escapeHtml(formatTick(total))}</text>`
+      : "";
+    const legend = `<div class="ai-chart-legend">${data.slices.map((s, i) => `<span class="ai-chart-legend-item"><span class="ai-chart-swatch" style="background:${chartColor(i, s.tone)}"></span>${escapeHtml(s.label)} · ${escapeHtml(formatTick(s.value))} (${(s.value / total * 100).toFixed(1)}%)</span>`).join("")}</div>`;
+    return { svgBody: `${arcs}${centerText}`, viewBox: `0 0 ${W} ${H}`, legend };
+  }
+
+  function renderChart(data) {
+    validateChart(data);
+    const out = data.type === "pie" || data.type === "donut" ? renderChartPie(data) : renderChartXY(data);
+    const title = data.title || "";
+    const subtitle = data.subtitle || "";
+    const caption = data.caption ? `<div class="ai-chart-caption">${escapeHtml(data.caption)}</div>` : "";
+    return componentShell(title || L("defaultChartTitle"), subtitle, "",
+      `<div class="ai-chart-wrap"><svg class="ai-chart-svg" viewBox="${out.viewBox}" role="img" aria-label="${escapeHtml(title || L("defaultChartTitle"))}">${out.svgBody}</svg></div>${out.legend}${caption}`);
+  }
+
   function componentShell(title, subtitle, controls, body) {
     return `
       <section class="ai-component">
@@ -822,6 +1127,7 @@
   COMPONENTS.set("table@1", renderTable);
   COMPONENTS.set("metric-cards@1", (_type, data) => renderMetricCards(data));
   COMPONENTS.set("callout@1", (_type, data) => renderCallout(data));
+  COMPONENTS.set("chart@1", (_type, data) => renderChart(data));
 
   function renderToken(token, headingCounts) {
     if (token.type === "heading") {

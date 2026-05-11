@@ -12,8 +12,14 @@ A small, strict output contract for AI-generated reports. Markdown for prose. Va
       "tone": "good"
     },
     {
+      "label": "Candidate components",
+      "value": "1",
+      "note": "chart (line / bar / area / pie / donut)",
+      "tone": "neutral"
+    },
+    {
       "label": "Runtime size",
-      "value": "~32 KB",
+      "value": "~38 KB",
       "note": "Single file, zero dependencies",
       "tone": "good"
     },
@@ -22,13 +28,21 @@ A small, strict output contract for AI-generated reports. Markdown for prose. Va
       "value": "Data only",
       "note": "No HTML, no callbacks, no script attrs",
       "tone": "good"
-    },
-    {
-      "label": "License",
-      "value": "MIT",
-      "note": "Open source, agent-agnostic",
-      "tone": "neutral"
     }
+  ]
+}
+```
+
+```aio:chart@1
+{
+  "type": "line",
+  "title": "Adoption trend (illustrative)",
+  "subtitle": "Hypothetical agent installs per week",
+  "yLabel": "installs",
+  "x": ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"],
+  "series": [
+    { "name": "Claude Code", "data": [40, 95, 180, 290, 410, 530, 660, 800] },
+    { "name": "Codex", "data": [20, 55, 110, 175, 250, 330, 420, 510], "tone": "good" }
   ]
 }
 ```
@@ -102,5 +116,10 @@ This page is itself an AIO document. Click `View source` in the top bar to see t
   "body": "Write your report as Markdown, drop in a metric-cards block for the headlines and a callout for the verdict, and validate with the CLI. The contract is small enough to remember; the runtime is small enough to inline. The agent ecosystem is the distribution channel."
 }
 ```
+
+## More demos
+
+- [Chart showcase](./demo-charts.html) — every `aio:chart@1` variant in one page.
+- [Chinese-locale report demo](./demo-zh.html) — the same renderer, `zh-CN` locale, dark/light toggle.
 
 For the spec, schemas, and changelog, see the [GitHub repository](https://github.com/wxkingstar/ai-output-runtime-g).

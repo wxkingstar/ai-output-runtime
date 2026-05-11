@@ -40,10 +40,12 @@ AIO blocks render beautifully when the surface knows the runtime, and they degra
 - Do not write JSON comments or trailing commas.
 - Do not output HTML, CSS, JavaScript, iframe, style, event handlers, template expressions, or custom components.
 - Do not include `<` or `>` in AIO string fields.
-- AIO is for stable v0.1 components only: `table@1`, `metric-cards@1`, `callout@1`. Do not invent new component names.
-- When a content shape doesn't fit any stable component (charts, timelines, diagrams), fall back to plain Markdown rather than guessing a name.
+- AIO components in scope:
+  - **stable**: `table@1`, `metric-cards@1`, `callout@1`
+  - **candidate**: `chart@1` (line / bar / area / pie / donut — data only, no styling overrides)
+- Do not invent new component names. When a content shape doesn't fit any listed component (timelines, diagrams, code diffs, etc.), fall back to plain Markdown.
 
-## Stable Components
+## Components
 
 ### `aio:metric-cards@1`
 
@@ -81,6 +83,45 @@ AIO blocks render beautifully when the surface knows the runtime, and they degra
   ]
 }
 ```
+
+### `aio:chart@1` (candidate)
+
+Schema-constrained line, bar, area, pie, and donut charts. Pure data emission — no colours, no formatters, no interactivity. Use when a table would obscure the shape of trend / comparison / proportion data.
+
+For line/bar/area, supply `x` (string labels) and `series` (each with `name` + numeric `data` of length equal to `x.length`). For pie/donut, supply `slices` (each with `label` + non-negative `value`).
+
+```aio:chart@1
+{
+  "type": "line",
+  "title": "Monthly active users",
+  "yLabel": "MAU (k)",
+  "x": ["Jan", "Feb", "Mar"],
+  "series": [
+    { "name": "Product A", "data": [120, 145, 162] },
+    { "name": "Product B", "data": [80, 95, 110], "tone": "good" }
+  ]
+}
+```
+
+```aio:chart@1
+{
+  "type": "donut",
+  "title": "Cost structure",
+  "slices": [
+    { "label": "Logistics", "value": 42 },
+    { "label": "Marketing", "value": 28 },
+    { "label": "Ops", "value": 18 },
+    { "label": "Other", "value": 12 }
+  ]
+}
+```
+
+Constraints to respect:
+- `type` is one of: `line`, `bar`, `area`, `pie`, `donut`.
+- Numbers must be finite. `NaN`, `Infinity`, `-Infinity` are rejected.
+- Up to 6 series and up to 50 x-axis points for line/bar/area; up to 12 slices for pie/donut.
+- `tone` (optional) is one of `neutral` / `good` / `warn` / `bad` / `accent`. The renderer chooses the colour.
+- No stacked variants, no scatter, no annotations, no log scale. If the data doesn't fit these primitives, fall back to a table.
 
 ## Local Tools
 

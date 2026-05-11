@@ -112,10 +112,87 @@ function validateCallout(data) {
   }
 }
 
+const CHART_TYPES = ["line", "bar", "area", "pie", "donut"];
+const CHART_TONES = ["neutral", "good", "warn", "bad", "accent"];
+const MAX_CHART_X = 50;
+const MAX_CHART_SERIES = 6;
+const MAX_CHART_SLICES = 12;
+
+function finiteNumber(value, path) {
+  if (typeof value !== "number" || !Number.isFinite(value)) fail(`${path} must be a finite number`);
+}
+
+function validateChart(data) {
+  rejectUnknownKeys(
+    data,
+    ["type", "title", "subtitle", "caption", "xLabel", "yLabel", "x", "series", "slices"],
+    "chart"
+  );
+  if (!data || typeof data.type !== "string" || !CHART_TYPES.includes(data.type)) {
+    fail(`chart.type must be one of: ${CHART_TYPES.join(", ")}`);
+  }
+  if (data.title) plain(data.title, "chart.title", 100);
+  if (data.subtitle) plain(data.subtitle, "chart.subtitle", 160);
+  if (data.caption) plain(data.caption, "chart.caption", 180);
+  if (data.xLabel) plain(data.xLabel, "chart.xLabel", 40);
+  if (data.yLabel) plain(data.yLabel, "chart.yLabel", 40);
+
+  const isPie = data.type === "pie" || data.type === "donut";
+  if (isPie) {
+    if (data.x !== undefined || data.series !== undefined) {
+      fail("chart of type pie/donut must not include x or series");
+    }
+    requireArray(data.slices, "chart.slices");
+    if (data.slices.length < 1 || data.slices.length > MAX_CHART_SLICES) {
+      fail(`chart.slices must contain 1-${MAX_CHART_SLICES} entries`);
+    }
+    let hasPositive = false;
+    data.slices.forEach((slice, index) => {
+      rejectUnknownKeys(slice, ["label", "value", "tone"], `chart.slices[${index}]`);
+      plain(slice.label, `chart.slices[${index}].label`, 80);
+      finiteNumber(slice.value, `chart.slices[${index}].value`);
+      if (slice.value < 0) fail(`chart.slices[${index}].value must be non-negative`);
+      if (slice.value > 0) hasPositive = true;
+      if (slice.tone && !CHART_TONES.includes(slice.tone)) {
+        fail(`chart.slices[${index}].tone must be one of: ${CHART_TONES.join(", ")}`);
+      }
+    });
+    if (!hasPositive) fail("chart.slices must contain at least one slice with value > 0");
+    return;
+  }
+
+  if (data.slices !== undefined) {
+    fail("chart of type line/bar/area must not include slices");
+  }
+  requireArray(data.x, "chart.x");
+  if (data.x.length < 1 || data.x.length > MAX_CHART_X) {
+    fail(`chart.x must contain 1-${MAX_CHART_X} entries`);
+  }
+  data.x.forEach((label, index) => plain(label, `chart.x[${index}]`, 40));
+
+  requireArray(data.series, "chart.series");
+  if (data.series.length < 1 || data.series.length > MAX_CHART_SERIES) {
+    fail(`chart.series must contain 1-${MAX_CHART_SERIES} entries`);
+  }
+  data.series.forEach((s, index) => {
+    rejectUnknownKeys(s, ["name", "data", "tone"], `chart.series[${index}]`);
+    plain(s.name, `chart.series[${index}].name`, 80);
+    requireArray(s.data, `chart.series[${index}].data`);
+    if (s.data.length !== data.x.length) {
+      fail(`chart.series[${index}].data must have length ${data.x.length} (matching chart.x)`);
+    }
+    s.data.forEach((v, j) => finiteNumber(v, `chart.series[${index}].data[${j}]`));
+    if (s.tone && !CHART_TONES.includes(s.tone)) {
+      fail(`chart.series[${index}].tone must be one of: ${CHART_TONES.join(", ")}`);
+    }
+  });
+}
+
 const validators = new Map([
   ["table@1", validateTable],
   ["metric-cards@1", validateMetricCards],
-  ["callout@1", validateCallout]
+  ["callout@1", validateCallout],
+  ["chart@1", validateChart]
 ]);
 
 function validateMarkdown(markdown) {

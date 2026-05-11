@@ -21,12 +21,12 @@
   ],
   "scripts": {
     "check": "node --check scripts/aio.mjs",
-    "test:valid": "node scripts/aio.mjs validate examples/valid-v0.1.md && node scripts/aio.mjs validate examples/report-demo.md",
+    "test:valid": "node scripts/aio.mjs validate examples/valid-v0.1.md && node scripts/aio.mjs validate examples/report-demo.md && node scripts/aio.mjs validate examples/chart-demo.md && node scripts/aio.mjs validate examples/landing.md",
     "test:invalid": "node scripts/aio.mjs validate examples/invalid-html.md && exit 1 || exit 0",
     "test": "npm run check && npm run test:valid && npm run test:invalid",
     "render": "node scripts/aio.mjs render examples/valid-v0.1.md --out dist/valid.html",
     "render:demo": "node scripts/aio.mjs render examples/report-demo.md --inline-runtime --out dist/report-demo.html",
-    "render:site": "node scripts/aio.mjs render examples/landing.md --inline-runtime --lang en --out docs/index.html && node scripts/aio.mjs render examples/report-demo.md --inline-runtime --lang zh-CN --out docs/demo-zh.html"
+    "render:site": "node scripts/aio.mjs render examples/landing.md --inline-runtime --lang en --out docs/index.html && node scripts/aio.mjs render examples/report-demo.md --inline-runtime --lang zh-CN --out docs/demo-zh.html && node scripts/aio.mjs render examples/chart-demo.md --inline-runtime --lang en --out docs/demo-charts.html"
   },
   "engines": {
     "node": ">=18"

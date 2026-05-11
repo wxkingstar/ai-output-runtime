@@ -18,6 +18,14 @@
       "spec": "specs/callout-v1.md"
     }
   ],
-  "candidate": []
+  "candidate": [
+    {
+      "info": "aio:chart@1",
+      "schema": "schemas/chart-v1.schema.json",
+      "spec": "specs/chart-v1.md",
+      "introducedIn": "0.2.0",
+      "note": "Candidate. Schema is final but may receive optional fields in minor revisions before promotion to stable."
+    }
+  ]
 }
 
