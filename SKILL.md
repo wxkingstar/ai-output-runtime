@@ -42,8 +42,8 @@ AIO blocks render beautifully when the surface knows the runtime, and they degra
 - Do not include `<` or `>` in AIO string fields.
 - AIO components in scope:
   - **stable**: `table@1`, `metric-cards@1`, `callout@1`
-  - **candidate**: `chart@1` (line / bar / area / pie / donut — data only, no styling overrides)
-- Do not invent new component names. When a content shape doesn't fit any listed component (timelines, diagrams, code diffs, etc.), fall back to plain Markdown.
+  - **candidate**: `chart@1`, `trend-card@1`, `status-grid@1`, `report-header@1`, `timeline@1`, `action-items@1`, `comparison@1`, `gauge@1`, `funnel@1`, `waterfall@1`, `heatmap@1`, `matrix@1`
+- Do not invent new component names. When a content shape doesn't fit any listed component (diagrams, code diffs, etc.), fall back to plain Markdown.
 
 ## Components
 
@@ -282,7 +282,7 @@ node SKILL_DIR/scripts/aio.mjs render report.md
 By default the rendered HTML references the runtime via jsDelivr CDN, so the file is portable:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.1/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.2/assets/ai-output-runtime.js"></script>
 ```
 
 For an offline / `file://`-friendly artifact, inline the runtime:

@@ -78,7 +78,7 @@ Works with Claude Code, Codex, and any agent that loads skills from GitHub. Afte
 ### 2. Render in the browser
 
 ```text
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.1/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.2/assets/ai-output-runtime.js"></script>
 <div id="app"></div>
 <script>
   AIOutputRuntime.render(markdown, { target: "#app", title: "Report" });

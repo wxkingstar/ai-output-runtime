@@ -2772,7 +2772,7 @@
   COMPONENTS.set("heatmap@1", (_type, data) => renderHeatmap(data));
   COMPONENTS.set("matrix@1", (_type, data) => renderMatrix(data));
 
-  const RUNTIME_VERSION = "v0.4.1";
+  const RUNTIME_VERSION = "v0.4.2";
 
   const BUILTIN_LANG_ALIAS = {
     js: "js", javascript: "js", jsx: "js", mjs: "js", cjs: "js",

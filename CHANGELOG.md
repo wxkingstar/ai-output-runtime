@@ -2,6 +2,26 @@
 
 All notable changes to AI Output Runtime are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## v0.4.2 — 2026-05-12
+
+Stabilization patch on top of v0.4.1. No new components, no schema changes, no runtime behavior changes. Drop-in upgrade.
+
+### Changed
+
+- **SKILL.md description broadened to match v0.4.x surface.** The frontmatter description (the field skill routers use to decide whether to fire) was still describing the pre-v0.4.0 set of 4 components and ~17 trigger words. It now covers:
+  - All 12 v0.4.x candidate components and 3 stable components, by name.
+  - ~50+ trigger words spanning the business-report scenarios shipped over v0.4.0 / v0.4.1 — weekly / monthly / quarterly / daily reviews, business reviews, postmortems, retros, KPI / OKR scorecards, financial P&L bridges, sales funnels, inventory / logistics / operations / customer / cohort analytics, trend / period-over-period analysis, vendor / competitor / 方案选型 / 竞品比较, risk assessment, status sync, action-item lists.
+  - Explicit "Skip for one-paragraph chat replies, code snippets, debugging help, or when the user explicitly asks for plain prose" exclusion clause so the router doesn't over-fire on conversational requests.
+  - "YOU are producing..." framing — clearer that this is about the agent's output action.
+- **Hard Rules section in SKILL.md now lists all 12 candidate components.** It previously named only `chart@1` as candidate, contradicting the per-component sections later in the file (`trend-card@1` / `status-grid@1` / `report-header@1` / `timeline@1` / `action-items@1` / `comparison@1` / `gauge@1` / `funnel@1` / `waterfall@1` / `heatmap@1` / `matrix@1`). Also removed "timelines" from the "fall back to plain Markdown" list now that `timeline@1` exists.
+- **Trigger Examples extended** to exercise the new components: weekly review, OKR scorecard, conversion funnel, P&L bridge, hour×day heatmap, customer cohort, vendor scorecard, action items.
+- `assets/lang/index.json` regenerated against `v0.4.2` runtime version.
+
+### Compatibility
+
+- All v0.4.x markdown renders identically. CDN-pinned `@v0.4.0` and `@v0.4.1` URLs continue to serve their original bytes.
+- New installs via `npx skills add wxkingstar/ai-output-runtime` pick up the broadened skill description automatically.
+
 ## v0.4.1 — 2026-05-11
 
 Reader-experience patch on top of v0.4.0. No schema changes; all features additive.
