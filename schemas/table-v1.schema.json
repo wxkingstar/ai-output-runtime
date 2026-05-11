@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ai-output.dev/schemas/table-v1.schema.json",
   "title": "aio:table@1",
+  "description": "Structural shape for aio:table@1 blocks. Note: cross-field invariants are enforced by the AIO validator at scripts/aio.mjs, not by this schema. In particular, each row in `rows` must have exactly `columns.length` cells, and each inner row must contain at most `columns.length` items. JSON Schema cannot express the row-length-equals-columns-length constraint, so any third-party implementation should mirror the CLI checks.",
   "type": "object",
   "additionalProperties": false,
   "properties": {

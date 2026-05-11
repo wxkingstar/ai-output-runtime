@@ -193,10 +193,30 @@ async function buildRuntimeTag(runtime, outPath) {
   return `<script src="${escapeHtmlAttr(rel || basename(absSrc))}"></script>`;
 }
 
-async function standaloneHtml(markdown, runtime, outPath) {
+const SAFE_LANG_RE = /^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})?$/;
+
+function safeLang(lang) {
+  if (!lang) return "en";
+  if (!SAFE_LANG_RE.test(lang)) {
+    throw new Error("--lang must look like a BCP47 tag, e.g. en, zh-CN, ja, ar-SA");
+  }
+  return lang;
+}
+
+async function standaloneHtml(markdown, runtime, outPath, opts) {
   const runtimeTag = await buildRuntimeTag(runtime, outPath);
+  const lang = safeLang(opts.lang);
+  const locale = lang;
+  const theme = opts.theme === "dark" || opts.theme === "light" ? opts.theme : "";
+  const themeAttr = theme ? ` data-ai-theme="${theme}"` : "";
+  const renderOpts = JSON.stringify({
+    target: "#app",
+    title: "AI Output Runtime v0.1",
+    locale,
+    theme: theme || undefined
+  });
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="${escapeHtmlAttr(lang)}"${themeAttr}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -207,10 +227,7 @@ async function standaloneHtml(markdown, runtime, outPath) {
   <div id="app"></div>
   <script id="ai-source" type="text/plain">${escapeScriptText(markdown)}</script>
   <script>
-    AIOutputRuntime.render(document.getElementById("ai-source").textContent.trim(), {
-      target: "#app",
-      title: "AI Output Runtime v0.1"
-    });
+    AIOutputRuntime.render(document.getElementById("ai-source").textContent.trim(), ${renderOpts});
   </script>
 </body>
 </html>
@@ -234,12 +251,14 @@ function hasFlag(rest, name) {
 function printUsage() {
   console.error(`Usage:
   aio validate <file.md>
-  aio render   <file.md> [--out <file.html>] [--runtime <url|path>] [--inline-runtime]
+  aio render   <file.md> [--out <file.html>] [--runtime <url|path>] [--inline-runtime] [--lang <tag>] [--theme <light|dark>]
 
 render options:
   --out <file.html>      Output HTML path (default: <input>.html alongside input)
   --runtime <url|path>   Runtime <script src>. Default: jsDelivr CDN pinned to ${RUNTIME_VERSION}
-  --inline-runtime       Inline the bundled runtime so the HTML works offline / via file://`);
+  --inline-runtime       Inline the bundled runtime so the HTML works offline / via file://
+  --lang <bcp47>         Document language and runtime locale (default: en). Currently bundled: en, zh-CN
+  --theme <light|dark>   Force a theme; omit to follow the user's system preference (auto)`);
 }
 
 async function main() {
@@ -283,9 +302,16 @@ async function main() {
     src: runtimeOverride || DEFAULT_RUNTIME_URL
   };
 
+  const lang = parseFlag(rest, "--lang") || "en";
+  const themeFlag = parseFlag(rest, "--theme");
+  if (themeFlag && themeFlag !== "light" && themeFlag !== "dark") {
+    console.error("--theme must be 'light' or 'dark' (omit for auto)");
+    process.exit(2);
+  }
+
   const resolvedOut = resolve(outPath);
   await mkdir(dirname(resolvedOut), { recursive: true });
-  const html = await standaloneHtml(markdown, runtime, resolvedOut);
+  const html = await standaloneHtml(markdown, runtime, resolvedOut, { lang, theme: themeFlag });
   await writeFile(resolvedOut, html, "utf8");
   console.log(`Rendered ${outPath}`);
 }
