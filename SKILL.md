@@ -1,21 +1,37 @@
 ---
 name: ai-output-runtime-g
-description: Use when the user asks for AIO, AI Output Runtime, aio:name@major output, structured AI reports, or wants to validate/render AIO Markdown. Compatible with Claude Code and other agents that install skills from GitHub.
+description: Use when the output is a structured report for humans — comparisons, conclusions/recommendations, status overviews, metric summaries, risk lists, audit findings, or anything the user would want to scan rather than read linearly. Triggers on natural requests like 生成报告 / 做一份分析 / 对比一下 / 总结结论 / 状态盘点 / 复盘 / 审查 / 审计 / dashboard / report / analysis / review / audit / comparison / status / summary, and on explicit mentions of AIO / AI Output Runtime / aio:name@major. Also use when validating or rendering AIO Markdown. Compatible with Claude Code, Codex, and other agents that install skills from GitHub.
 ---
 
 # AI Output Runtime
 
-Use this skill when the user wants AI output to follow AIO v0.1, or when they ask for output that can be rendered by AI Output Runtime.
+Use this skill whenever the agent is producing **structured content for human consumption** — reports, comparisons, conclusions, status panels, audit findings — not just when the user names AIO explicitly. AIO Markdown lets agents highlight the takeaways, compare options side-by-side, and ship findings as a portable artifact, instead of dumping a wall of prose.
 
-## Output Contract
+## Default Output Policy
 
-Write normal CommonMark Markdown by default.
+**Use AIO by default for any of these content shapes:**
 
-Use AIO fenced code blocks only when structured rendering is useful:
+- A **conclusion / recommendation / verdict** at the end of an analysis → `aio:callout@1`
+- A **comparison** between options, vendors, designs, or scenarios → `aio:table@1`
+- A **summary of key metrics or status indicators** (counts, percentages, pass/fail, deltas) → `aio:metric-cards@1`
+- **Risk / finding / issue lists** with severity or status → `aio:callout@1` (items) or `aio:table@1`
+- **Audit / review / QA outputs** with structured findings → mix of the three above
 
-- `aio:table@1` for structured rows and columns.
-- `aio:metric-cards@1` for compact summary metrics.
-- `aio:callout@1` for final recommendations, risks, warnings, or important notes.
+**Fall back to plain CommonMark Markdown only when:**
+
+- The reply is pure conversational prose / Q&A.
+- The output is a code suggestion, snippet, or explanation in a chat surface.
+- The user explicitly asked for plain Markdown or a specific format.
+
+Prose paragraphs, narrative explanations, and inline lists stay as CommonMark — AIO blocks are interleaved with prose, not a replacement for it.
+
+## Render-aware emission
+
+AIO blocks render beautifully when the surface knows the runtime, and they degrade to a JSON code block when it doesn't. So:
+
+- **When writing a `.md` or `.html` file to disk** (which the user can render with `aio render` or via the CDN runtime) → always emit AIO for the content shapes above.
+- **When responding in a chat / TTY surface that may not render AIO** → still emit AIO for structured shapes (a JSON code block is no worse than a markdown table for the same data, and renders perfectly when the user later pipes it through `aio render`). Keep blocks small enough to be readable as JSON.
+- **Never emit AIO without surrounding prose**. AIO blocks are dressing for a Markdown document, not a replacement for one.
 
 ## Hard Rules
 
@@ -24,7 +40,8 @@ Use AIO fenced code blocks only when structured rendering is useful:
 - Do not write JSON comments or trailing commas.
 - Do not output HTML, CSS, JavaScript, iframe, style, event handlers, template expressions, or custom components.
 - Do not include `<` or `>` in AIO string fields.
-- If unsure whether a component is needed, use plain Markdown.
+- AIO is for stable v0.1 components only: `table@1`, `metric-cards@1`, `callout@1`. Do not invent new component names.
+- When a content shape doesn't fit any stable component (charts, timelines, diagrams), fall back to plain Markdown rather than guessing a name.
 
 ## Stable Components
 
@@ -103,9 +120,27 @@ Prefer the CDN or `--inline-runtime` over copying `SKILL_DIR/assets/ai-output-ru
 
 Prefer this structure:
 
-1. Markdown heading and one short prose summary.
-2. Optional `aio:metric-cards@1` for key status.
-3. Optional `aio:callout@1` for final recommendation or warnings.
-4. Optional `aio:table@1` for comparisons, risks, or audit rows.
-5. Plain Markdown conclusion.
+1. Markdown heading and one short prose summary (1–2 sentences, what this report is and why it exists).
+2. `aio:metric-cards@1` for the headline numbers / status indicators.
+3. `aio:table@1` for any comparison, finding list, or row-shaped data.
+4. Plain Markdown sections for narrative context and analysis.
+5. `aio:callout@1` for the final recommendation, verdict, or top-priority warning.
+
+A good AIO report is **prose + structured slots**, not raw JSON walls. If you're emitting more than two AIO blocks in a row without prose between them, restructure.
+
+## Trigger Examples
+
+These natural requests should activate this skill:
+
+- "生成一份月度财务报告 / monthly financial report"
+- "做一份代码审查 / code review"
+- "对比这几种方案 / compare these options"
+- "总结一下昨天的数据 / summarize yesterday's data"
+- "盘点一下当前进度 / status check"
+- "复盘上周的事故 / incident postmortem"
+- "做个安全审计 / security audit"
+- "给我一个 dashboard / status overview"
+- "评估一下风险 / risk assessment"
+
+For any of the above, default to AIO blocks for the structured slots, not a wall of Markdown prose.
 

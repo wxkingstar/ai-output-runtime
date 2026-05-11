@@ -13,6 +13,7 @@ const RUNTIME_VERSION = "v0.1.1";
 const DEFAULT_RUNTIME_URL = `https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@${RUNTIME_VERSION}/assets/ai-output-runtime.js`;
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const BUNDLED_RUNTIME_PATH = resolve(SCRIPT_DIR, "../assets/ai-output-runtime.js");
+const MAX_INPUT_BYTES = 4 * 1024 * 1024;
 
 function parseBlocks(markdown) {
   const lines = markdown.replace(/\r\n/g, "\n").split("\n");
@@ -140,8 +141,42 @@ function escapeScriptText(value) {
   return String(value).replace(/<\/script/gi, "<\\/script");
 }
 
-function isRemoteUrl(value) {
-  return /^https?:\/\//i.test(value);
+function isHttpsUrl(value) {
+  return /^https:\/\//i.test(value);
+}
+
+const SAFE_RUNTIME_CHARS = /^[A-Za-z0-9._~\-:/?#@!$&()*+,;=]+$/;
+
+function assertSafeRuntimeSrc(value) {
+  if (typeof value !== "string" || !value) {
+    throw new Error("--runtime must be a non-empty string");
+  }
+  if (/[<>"'\\\s\u0000-\u001f]/.test(value)) {
+    throw new Error("--runtime must not contain quotes, angle brackets, backslashes, or whitespace");
+  }
+  if (value.includes("..")) {
+    throw new Error("--runtime must not contain path traversal");
+  }
+  if (isHttpsUrl(value)) {
+    if (!SAFE_RUNTIME_CHARS.test(value)) {
+      throw new Error("--runtime URL contains disallowed characters");
+    }
+    return;
+  }
+  if (/^[a-zA-Z][a-zA-Z0-9+.\-]*:/.test(value)) {
+    throw new Error("--runtime only accepts https:// URLs or relative/absolute file paths");
+  }
+  if (!SAFE_RUNTIME_CHARS.test(value)) {
+    throw new Error("--runtime path contains disallowed characters");
+  }
+}
+
+function escapeHtmlAttr(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 async function buildRuntimeTag(runtime, outPath) {
@@ -149,12 +184,13 @@ async function buildRuntimeTag(runtime, outPath) {
     const code = await readFile(BUNDLED_RUNTIME_PATH, "utf8");
     return `<script>${escapeScriptText(code)}</script>`;
   }
-  if (isRemoteUrl(runtime.src)) {
-    return `<script src="${runtime.src}"></script>`;
+  assertSafeRuntimeSrc(runtime.src);
+  if (isHttpsUrl(runtime.src)) {
+    return `<script src="${escapeHtmlAttr(runtime.src)}"></script>`;
   }
   const absSrc = isAbsolute(runtime.src) ? runtime.src : resolve(process.cwd(), runtime.src);
   const rel = relative(dirname(outPath), absSrc).split("\\").join("/");
-  return `<script src="${rel || basename(absSrc)}"></script>`;
+  return `<script src="${escapeHtmlAttr(rel || basename(absSrc))}"></script>`;
 }
 
 async function standaloneHtml(markdown, runtime, outPath) {
@@ -215,6 +251,10 @@ async function main() {
 
   const inputPath = resolve(file);
   const markdown = await readFile(inputPath, "utf8");
+  if (Buffer.byteLength(markdown, "utf8") > MAX_INPUT_BYTES) {
+    console.error(`${file}: input exceeds ${MAX_INPUT_BYTES} bytes`);
+    process.exit(1);
+  }
   const diagnostics = validateMarkdown(markdown);
 
   if (diagnostics.length) {

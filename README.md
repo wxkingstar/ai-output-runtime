@@ -1,6 +1,6 @@
 # ai-output-runtime-g
 
-Claude Code / agent skill for AI Output Runtime v0.1.
+Agent-agnostic skill for AI Output Runtime v0.1 — works with Claude Code, Codex, and any agent that loads skills from GitHub.
 
 [![CI](https://github.com/wxkingstar/ai-output-runtime-g/actions/workflows/ci.yml/badge.svg)](https://github.com/wxkingstar/ai-output-runtime-g/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/aio-v0.1.1-2563eb)](https://github.com/wxkingstar/ai-output-runtime-g/releases/tag/v0.1.1)
@@ -8,12 +8,12 @@ Claude Code / agent skill for AI Output Runtime v0.1.
 
 **A small, strict output contract for AI-generated reports: Markdown for prose, JSON blocks for structured data, and a safe runtime for rendering.**
 
-- Install as a Claude Code / agent skill.
-- Render with one CDN script.
+- Install as a skill into any agent that loads GitHub skills.
+- Render with one CDN script (or inline for offline / `file://`).
 - Validate with a zero-dependency CLI.
 - Avoid AI-generated HTML, CSS, JavaScript, or ad-hoc DSLs.
 
-AIO keeps AI output as readable CommonMark Markdown, while allowing selected structured sections to render through strict JSON blocks:
+AIO keeps AI output as readable Markdown (a pragmatic CommonMark subset — headings, paragraphs, lists, code blocks, inline emphasis), while allowing selected structured sections to render through strict JSON blocks:
 
 - `aio:table@1`
 - `aio:metric-cards@1`
@@ -59,6 +59,28 @@ Use the immutable version tag in production:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.1.1/assets/ai-output-runtime.js"></script>
+```
+
+For supply-chain integrity, add a Subresource Integrity hash. Generate it with:
+
+```bash
+curl -s https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.1.1/assets/ai-output-runtime.js \
+  | openssl dgst -sha384 -binary | openssl base64 -A
+```
+
+Then pin the hash in the script tag:
+
+```html
+<script
+  src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.1.1/assets/ai-output-runtime.js"
+  integrity="sha384-<paste-hash-here>"
+  crossorigin="anonymous"></script>
+```
+
+Alternatively, ship the runtime inline (no external dependency) with the CLI:
+
+```bash
+node scripts/aio.mjs render report.md --inline-runtime
 ```
 
 Then render AIO Markdown:

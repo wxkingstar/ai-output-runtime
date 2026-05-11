@@ -316,84 +316,6 @@
     .ai-badge.medium { color: var(--ai-yellow); background: #fff7e8; border-color: #ead8ad; }
     .ai-badge.low { color: var(--ai-red); background: #fff0ef; border-color: #ebc3c0; }
 
-    .ai-decision {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
-      gap: 18px;
-    }
-
-    .ai-decision-main {
-      background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%);
-      border: 1px solid #bbf7d0;
-      border-left: 4px solid var(--ai-green);
-      border-radius: 7px;
-      padding: 15px;
-    }
-
-    .ai-decision-label {
-      color: var(--ai-green);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-
-    .ai-decision-main strong {
-      display: block;
-      font-size: 20px;
-      line-height: 1.25;
-      margin-bottom: 8px;
-    }
-
-    .ai-risk-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .ai-risk {
-      border: 1px solid var(--ai-line);
-      border-radius: 7px;
-      padding: 11px;
-      background: #fff;
-    }
-
-    .ai-risk strong { display: block; margin-bottom: 4px; }
-    .ai-risk p { margin: 0; color: var(--ai-muted); font-size: 13px; }
-
-    .ai-matrix {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 12px;
-    }
-
-    .ai-matrix-card {
-      border: 1px solid var(--ai-line);
-      border-radius: 7px;
-      padding: 12px;
-      background: #fff;
-    }
-
-    .ai-matrix-card strong {
-      display: block;
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-
-    .ai-score {
-      height: 8px;
-      border-radius: 999px;
-      background: #e9eef1;
-      overflow: hidden;
-      margin: 10px 0;
-    }
-
-    .ai-score span {
-      display: block;
-      height: 100%;
-      background: linear-gradient(90deg, var(--ai-accent), #60a5fa);
-      border-radius: inherit;
-    }
-
     .ai-metric-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -436,70 +358,6 @@
     .ai-metric-card.good .ai-metric-value { color: var(--ai-green); }
     .ai-metric-card.warn .ai-metric-value { color: var(--ai-yellow); }
     .ai-metric-card.bad .ai-metric-value { color: var(--ai-red); }
-
-    .ai-tabs {
-      display: flex;
-      gap: 6px;
-      border-bottom: 1px solid var(--ai-line);
-      overflow-x: auto;
-      padding: 0 14px;
-      background: #f8fafc;
-    }
-
-    .ai-tab {
-      appearance: none;
-      border: 0;
-      border-bottom: 2px solid transparent;
-      background: transparent;
-      padding: 12px 4px 10px;
-      margin-right: 16px;
-      font: inherit;
-      font-size: 14px;
-      color: var(--ai-muted);
-      white-space: nowrap;
-      cursor: pointer;
-    }
-
-    .ai-tab[aria-selected="true"] {
-      color: var(--ai-accent);
-      border-bottom-color: var(--ai-accent);
-    }
-
-    .ai-tab-panel { display: none; }
-    .ai-tab-panel.active { display: block; }
-
-    .ai-flow {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      gap: 12px;
-      counter-reset: flow;
-    }
-
-    .ai-flow-step {
-      position: relative;
-      border: 1px solid var(--ai-line);
-      border-radius: 7px;
-      padding: 12px;
-      background: #fff;
-    }
-
-    .ai-flow-step::before {
-      counter-increment: flow;
-      content: counter(flow);
-      display: inline-flex;
-      width: 24px;
-      height: 24px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 999px;
-      background: var(--ai-accent);
-      color: #fff;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .ai-flow-step strong { display: block; margin-bottom: 6px; }
-    .ai-flow-step p { margin: 0; color: var(--ai-muted); font-size: 13px; }
 
     .ai-source {
       display: none;
@@ -549,7 +407,6 @@
         padding-top: 20px;
       }
       .ai-toc { position: static; order: -1; }
-      .ai-decision { grid-template-columns: 1fr; }
       .ai-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .ai-topbar-inner { align-items: flex-start; flex-direction: column; }
       .ai-actions { justify-content: flex-start; }
@@ -806,44 +663,6 @@
     `);
   }
 
-  function renderDecision(data) {
-    requireString(data.recommendation, "recommendation");
-    requireString(data.reason, "reason");
-    const risks = Array.isArray(data.risks) ? data.risks : [];
-    const riskHtml = risks.map((risk) => `
-      <div class="ai-risk">
-        <strong>${escapeHtml(risk.title || "风险")}</strong>
-        <p>${escapeHtml(risk.mitigation || risk.description || "")}</p>
-      </div>
-    `).join("");
-    return componentShell(data.title || "最终决策", data.subtitle || "Renderer 负责结构化呈现", "", `
-      <div class="ai-decision">
-        <div class="ai-decision-main">
-          <div class="ai-decision-label">Recommendation</div>
-          <strong>${escapeHtml(data.recommendation)}</strong>
-          <p>${inlineMarkdown(data.reason)}</p>
-        </div>
-        <div class="ai-risk-list">${riskHtml}</div>
-      </div>
-    `);
-  }
-
-  function renderMatrix(data) {
-    requireArray(data.items, "items");
-    const cards = data.items.map((item) => {
-      const score = Math.max(0, Math.min(100, Number(item.score || 0)));
-      return `
-        <div class="ai-matrix-card">
-          <strong>${escapeHtml(item.name || "Item")}</strong>
-          <div>${escapeHtml(item.summary || "")}</div>
-          <div class="ai-score" aria-label="score ${score}"><span style="width:${score}%"></span></div>
-          <div class="ai-component-subtitle">${escapeHtml(item.note || "")}</div>
-        </div>
-      `;
-    }).join("");
-    return componentShell(data.title || "判断矩阵", data.subtitle || "", "", `<div class="ai-matrix">${cards}</div>`);
-  }
-
   function renderMetricCards(data) {
     validateMetricCards(data);
     requireArray(data.items, "items");
@@ -879,44 +698,6 @@
         </div>
       </section>
     `;
-  }
-
-  function renderTabs(data) {
-    requireArray(data.tabs, "tabs");
-    const id = `tabs-${Math.random().toString(36).slice(2)}`;
-    const tabs = data.tabs.map((tab, index) => `
-      <button class="ai-tab" type="button" role="tab" aria-selected="${index === 0 ? "true" : "false"}" data-ai-tab="${id}-${index}">
-        ${escapeHtml(tab.label || `Tab ${index + 1}`)}
-      </button>
-    `).join("");
-    const panels = data.tabs.map((tab, index) => `
-      <div class="ai-tab-panel ${index === 0 ? "active" : ""}" role="tabpanel" data-ai-panel="${id}-${index}">
-        ${Array.isArray(tab.points) ? `<ul>${tab.points.map((point) => `<li>${inlineMarkdown(point)}</li>`).join("")}</ul>` : `<p>${inlineMarkdown(tab.content || "")}</p>`}
-      </div>
-    `).join("");
-    return `
-      <section class="ai-component">
-        <div class="ai-component-header">
-          <div>
-            <h3 class="ai-component-title">${escapeHtml(data.title || "分层说明")}</h3>
-            ${data.subtitle ? `<div class="ai-component-subtitle">${escapeHtml(data.subtitle)}</div>` : ""}
-          </div>
-        </div>
-        <div class="ai-tabs" role="tablist">${tabs}</div>
-        <div class="ai-component-body">${panels}</div>
-      </section>
-    `;
-  }
-
-  function renderFlow(data) {
-    requireArray(data.steps, "steps");
-    const steps = data.steps.map((step) => `
-      <div class="ai-flow-step">
-        <strong>${escapeHtml(step.title || "Step")}</strong>
-        <p>${escapeHtml(step.description || "")}</p>
-      </div>
-    `).join("");
-    return componentShell(data.title || "处理流程", data.subtitle || "", "", `<div class="ai-flow">${steps}</div>`);
   }
 
   COMPONENTS.set("table@1", renderTable);
@@ -982,18 +763,6 @@
       });
     });
 
-    root.querySelectorAll("[data-ai-tab]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const key = button.dataset.aiTab;
-        const group = key.replace(/-\d+$/, "");
-        root.querySelectorAll(`[data-ai-tab^="${CSS.escape(group)}-"]`).forEach((tab) => {
-          tab.setAttribute("aria-selected", String(tab === button));
-        });
-        root.querySelectorAll(`[data-ai-panel^="${CSS.escape(group)}-"]`).forEach((panel) => {
-          panel.classList.toggle("active", panel.dataset.aiPanel === key);
-        });
-      });
-    });
   }
 
   function render(markdown, options) {
