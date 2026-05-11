@@ -11,6 +11,12 @@
 
 [**ライブデモ →**](https://wxkingstar.github.io/ai-output-runtime-g/)
 
+<p align="center">
+  <a href="https://wxkingstar.github.io/ai-output-runtime-g/">
+    <img src="docs/screenshots/landing-light.png" alt="AIO ライトテーマのランディング" width="720">
+  </a>
+</p>
+
 ---
 
 ## なぜこのプロジェクトが必要か
@@ -59,6 +65,12 @@ npx aio render report.md --inline-runtime
 | stable | `aio:metric-cards@1` | 主要 KPI、ステータス概要、差分 |
 | stable | `aio:callout@1` | 結論、推奨、警告 |
 | candidate | `aio:chart@1` | line / bar / area / pie / donut |
+
+<p align="center">
+  <a href="https://wxkingstar.github.io/ai-output-runtime-g/demo-charts.html">
+    <img src="docs/screenshots/charts-light.png" alt="aio:chart@1 — 5 種類のチャート" width="720">
+  </a>
+</p>
 
 加えて：
 

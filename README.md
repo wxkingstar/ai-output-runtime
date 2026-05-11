@@ -11,6 +11,12 @@
 
 [**Live demo →**](https://wxkingstar.github.io/ai-output-runtime-g/)
 
+<p align="center">
+  <a href="https://wxkingstar.github.io/ai-output-runtime-g/">
+    <img src="docs/screenshots/landing-light.png" alt="AIO landing page in light theme" width="720">
+  </a>
+</p>
+
 ---
 
 ## Why this exists
@@ -59,6 +65,12 @@ The output is a single self-contained `.html` you can email, archive, or open fr
 | stable | `aio:metric-cards@1` | headline KPIs, status snapshots, deltas |
 | stable | `aio:callout@1` | conclusions, recommendations, warnings |
 | candidate | `aio:chart@1` | line / bar / area / pie / donut |
+
+<p align="center">
+  <a href="https://wxkingstar.github.io/ai-output-runtime-g/demo-charts.html">
+    <img src="docs/screenshots/charts-light.png" alt="aio:chart@1 — line, bar, area, pie, donut" width="720">
+  </a>
+</p>
 
 Plus:
 

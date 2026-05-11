@@ -11,6 +11,12 @@
 
 [**在线 demo →**](https://wxkingstar.github.io/ai-output-runtime-g/)
 
+<p align="center">
+  <a href="https://wxkingstar.github.io/ai-output-runtime-g/">
+    <img src="docs/screenshots/landing-light.png" alt="AIO 浅色主题 landing 页" width="720">
+  </a>
+</p>
+
 ---
 
 ## 为什么有这个项目
@@ -59,6 +65,12 @@ npx aio render report.md --inline-runtime
 | stable | `aio:metric-cards@1` | 核心 KPI、状态总览、同比/环比 |
 | stable | `aio:callout@1` | 结论、推荐、警告 |
 | candidate | `aio:chart@1` | line / bar / area / pie / donut |
+
+<p align="center">
+  <a href="https://wxkingstar.github.io/ai-output-runtime-g/demo-charts.html">
+    <img src="docs/screenshots/charts-light.png" alt="aio:chart@1 五种图表" width="720">
+  </a>
+</p>
 
 外加：
 
