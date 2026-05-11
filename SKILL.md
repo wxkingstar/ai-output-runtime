@@ -245,9 +245,7 @@ Picking between similar components:
 
 ## Reader-experience features available
 
-The runtime exposes a `Skim` toggle in the top bar that dims narrative paragraphs so the structured blocks (cards / charts / tables / callouts) read first — useful for stakeholders who only have 10 seconds. You don't need to author anything special for this to work; it activates on any AIO document.
-
-Numbers in `trend-card@1` are locale-formatted (`Intl.NumberFormat`) based on the document `lang`. Pass the right `lang` to the CLI (`--lang en` / `--lang zh-CN` / `--lang ja`) so currency separators and decimal marks render correctly.
+Numbers in number-bearing components (`trend-card@1`, `gauge@1`, `funnel@1`, `waterfall@1`, `heatmap@1`) are locale-formatted via `Intl.NumberFormat` based on the document `lang`. When no `format` is supplied, numbers default to grouped digits with thousands separators (e.g. `13,620` not `13620`). Pass the right `lang` to the CLI (`--lang en` / `--lang zh-CN` / `--lang ja`) so currency separators and decimal marks render correctly. Use `format: "raw"` only when you explicitly do not want any formatting.
 
 ## Fenced code blocks (syntax highlight)
 
@@ -282,7 +280,7 @@ node SKILL_DIR/scripts/aio.mjs render report.md
 By default the rendered HTML references the runtime via jsDelivr CDN, so the file is portable:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.2/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.3/assets/ai-output-runtime.js"></script>
 ```
 
 For an offline / `file://`-friendly artifact, inline the runtime:

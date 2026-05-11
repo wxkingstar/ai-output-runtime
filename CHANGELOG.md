@@ -2,6 +2,24 @@
 
 All notable changes to AI Output Runtime are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## v0.4.3 — 2026-05-12
+
+Reader-feedback patch. Three small but high-impact rendering changes plus the removal of one underused feature. No schema changes; drop-in upgrade for any v0.4.x markdown.
+
+### Changed
+
+- **Numbers default to thousands separators.** When `format` is not supplied on `trend-card` / `gauge` / `funnel` / `waterfall` / `heatmap` items, the runtime now renders the value with locale-aware grouping (e.g. `13620` → `13,620`, `12800000` → `12,800,000`). Previously the default was raw, which produced unreadable strings of digits in finance / sales / inventory reports. Use `format: "raw"` to opt back into the old behavior.
+- **Funnel values always visible, even on tiny bars.** Previously the value text lived inside the bar, right-aligned. On stages with very small width (e.g. final-stage conversion of 0.05%) the bar collapsed to a sliver and clipped the value to "00". The value now renders as a normal-color label to the right of the bar, with `min-width: 96px` reserved so the column stays aligned across rows. The bar is now a pure colored block.
+
+### Removed
+
+- **Skim mode.** The top-bar "Skim / 速览" toggle that dimmed narrative paragraphs is gone. In practice the Executive Summary card already serves the "10-second exec view" use case better, and the dim-on-hover interaction was confusing. Removed: locale key `skimMode`, the `data-ai-skim` button, its click handler, the `body.ai-skim` CSS rule, the `.ai-button.ai-skim-on` style, and the SKILL.md mention.
+
+### Compatibility
+
+- All v0.4.x markdown renders identically except for numeric formatting (always an improvement; rounds remain correct, no precision change) and the funnel-value placement (always visible now, never clipped).
+- CDN-pinned `@v0.4.0` / `@v0.4.1` / `@v0.4.2` URLs continue to serve their original bytes.
+
 ## v0.4.2 — 2026-05-12
 
 Stabilization patch on top of v0.4.1. No new components, no schema changes, no runtime behavior changes. Drop-in upgrade.

@@ -5,7 +5,7 @@
 [![CI](https://github.com/wxkingstar/ai-output-runtime/actions/workflows/ci.yml/badge.svg)](https://github.com/wxkingstar/ai-output-runtime/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/aio-v0.2.0-2563eb)](https://github.com/wxkingstar/ai-output-runtime/releases/tag/v0.2.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CDN](https://img.shields.io/badge/jsDelivr-CDN-orange)](https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.2/assets/ai-output-runtime.js)
+[![CDN](https://img.shields.io/badge/jsDelivr-CDN-orange)](https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.3/assets/ai-output-runtime.js)
 
 [🇬🇧 English](README.md) · 🇨🇳 **中文** · [🇯🇵 日本語](README.ja.md)
 
@@ -86,7 +86,7 @@ npx aio render report.md --inline-runtime
 **1. CDN script 标签**——一个 `<script>` 丢进任何页面：
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.2/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.3/assets/ai-output-runtime.js"></script>
 <div id="app"></div>
 <script>
   AIOutputRuntime.render(markdown, { target: "#app", title: "我的报告" });
@@ -96,7 +96,7 @@ npx aio render report.md --inline-runtime
 需要供应链校验时加上 [Subresource Integrity](https://developer.mozilla.org/zh-CN/docs/Web/Security/Subresource_Integrity)：
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.2/assets/ai-output-runtime.js \
+curl -s https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime@v0.4.3/assets/ai-output-runtime.js \
   | openssl dgst -sha384 -binary | openssl base64 -A
 ```
 
