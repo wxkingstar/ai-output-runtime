@@ -1,6 +1,6 @@
 {
   "name": "ai-output-runtime-g",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Claude Code and agent skill for AI Output Runtime v0.1.",
   "type": "module",
   "bin": {

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Output Runtime Demo</title>
+  <script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.1.1/assets/ai-output-runtime.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <script id="ai-source" type="text/plain"># AI Output Runtime v0.1 Demo
+
+AIO is a small, strict output contract for AI-generated reports: Markdown for prose, JSON blocks for structured data, and a safe runtime for rendering.
+
+```aio:metric-cards@1
+{
+  "items": [
+    {
+      "label": "Source",
+      "value": "Markdown",
+      "note": "Readable and diffable",
+      "tone": "good"
+    },
+    {
+      "label": "Structured Blocks",
+      "value": "JSON",
+      "note": "Schema validated",
+      "tone": "good"
+    },
+    {
+      "label": "Stable Blocks",
+      "value": "3",
+      "note": "table / metric-cards / callout",
+      "tone": "neutral"
+    },
+    {
+      "label": "AI Code",
+      "value": "0",
+      "note": "No HTML, CSS, or JS from AI",
+      "tone": "warn"
+    }
+  ]
+}
+```
+
+```aio:callout@1
+{
+  "tone": "success",
+  "title": "Install as a skill",
+  "body": "Run npx skills add wxkingstar/ai-output-runtime-g -y, then ask your agent to write AIO v0.1 reports."
+}
+```
+
+## Stable Blocks
+
+```aio:table@1
+{
+  "title": "AIO v0.1 blocks",
+  "columns": ["Block", "Purpose", "Typical use"],
+  "rows": [
+    ["aio:metric-cards@1", "Summary metrics", "Report header"],
+    ["aio:callout@1", "Recommendation or warning", "Final answer, risk note"],
+    ["aio:table@1", "Rows and columns", "Comparison, audit, checklist"]
+  ]
+}
+```
+
+## Why not HTML?
+
+Markdown is easy to read, edit, diff, and archive. HTML is powerful, but AI-generated HTML is hard to review and can become a safety boundary problem. AIO keeps the source simple and lets a deterministic runtime handle the presentation.
+
+```aio:callout@1
+{
+  "tone": "warning",
+  "title": "Security boundary",
+  "body": "AIO v0.1 does not allow AI-generated HTML, CSS, JavaScript, iframes, event handlers, custom components, or remote schemas."
+}
+```</script>
+  <script>
+    AIOutputRuntime.render(document.getElementById("ai-source").textContent.trim(), {
+      target: "#app",
+      title: "AI Output Runtime Demo"
+    });
+  </script>
+</body>
+</html>
+
