@@ -1,6 +1,6 @@
 {
   "name": "ai-output-runtime-g",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Agent-agnostic skill for AI Output Runtime v0.1: a small Markdown + JSON contract for LLM-generated reports.",
   "type": "module",
   "bin": {

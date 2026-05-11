@@ -140,7 +140,7 @@ node SKILL_DIR/scripts/aio.mjs render report.md
 By default the rendered HTML references the runtime via jsDelivr CDN, so the file is portable:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.0/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.1/assets/ai-output-runtime.js"></script>
 ```
 
 For an offline / `file://`-friendly artifact, inline the runtime:

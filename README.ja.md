@@ -5,7 +5,7 @@
 [![CI](https://github.com/wxkingstar/ai-output-runtime-g/actions/workflows/ci.yml/badge.svg)](https://github.com/wxkingstar/ai-output-runtime-g/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/aio-v0.2.0-2563eb)](https://github.com/wxkingstar/ai-output-runtime-g/releases/tag/v0.2.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![CDN](https://img.shields.io/badge/jsDelivr-CDN-orange)](https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.0/assets/ai-output-runtime.js)
+[![CDN](https://img.shields.io/badge/jsDelivr-CDN-orange)](https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.1/assets/ai-output-runtime.js)
 
 [🇬🇧 English](README.md) · [🇨🇳 中文](README.zh-CN.md) · 🇯🇵 **日本語**
 
@@ -86,7 +86,7 @@ npx aio render report.md --inline-runtime
 **1. CDN script タグ**——任意のページに `<script>` を 1 行：
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.0/assets/ai-output-runtime.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.1/assets/ai-output-runtime.js"></script>
 <div id="app"></div>
 <script>
   AIOutputRuntime.render(markdown, { target: "#app", title: "レポート" });
@@ -96,7 +96,7 @@ npx aio render report.md --inline-runtime
 サプライチェーンの整合性が必要なら [Subresource Integrity](https://developer.mozilla.org/ja/docs/Web/Security/Subresource_Integrity) でピン留め：
 
 ```bash
-curl -s https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.0/assets/ai-output-runtime.js \
+curl -s https://cdn.jsdelivr.net/gh/wxkingstar/ai-output-runtime-g@v0.2.1/assets/ai-output-runtime.js \
   | openssl dgst -sha384 -binary | openssl base64 -A
 ```
 

@@ -2,6 +2,18 @@
 
 All notable changes to AI Output Runtime are documented here. The project follows [Semantic Versioning](https://semver.org/).
 
+## v0.2.1 — 2026-05-11
+
+### Fixed
+
+- **Dark mode contrast across all stable components.** v0.2.0 introduced the dual-theme system at the variable level, but a handful of CSS rules still hardcoded light-mode colours: inline `<code>` backgrounds, `<pre>` block surrounds, table header strip, default badge background, table cell badges (high/medium/low), the section-number chip, the search input, the metric-card background, the TOC border, the error block, and all four callout tone backgrounds (info / success / warning / danger). In dark mode these collapsed to invisible white-on-dark slabs.
+- Each of those rules now reads from a new dedicated CSS variable (`--ai-code-bg`, `--ai-pre-bg`, `--ai-table-header-bg`, `--ai-badge-bg`, `--ai-badge-{high,medium,low}-{bg,border}`, `--ai-section-chip-bg`, `--ai-input-bg`, `--ai-toc-bg`, `--ai-error-{bg,fg,border}`, `--ai-callout-{info,success,warning,danger}-bg`). The light theme keeps every previous colour exactly; the dark theme defines semi-transparent overlays so tone semantics survive while contrast against the slate background stays readable.
+- Added `.ai-document pre code` reset so nested inline code inside a code block does not inherit the standalone inline-code styling on top of the pre block background.
+
+### Changed
+
+- Bumped CDN-default RUNTIME_VERSION to `v0.2.1`. All README, SKILL.md, launch-kit, launch-plan, and `examples/landing.md` references updated to the new tag. `@v0.2.0` remains pinned to the previous (broken-in-dark) runtime for any links that already shipped.
+
 ## v0.2.0 — 2026-05-11
 
 ### Added

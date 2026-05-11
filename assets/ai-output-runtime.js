@@ -87,6 +87,28 @@
       --ai-chart-4: #8b5cf6;
       --ai-chart-5: #ec4899;
       --ai-chart-6: #06b6d4;
+      --ai-code-bg: #e9eef1;
+      --ai-code-border: #dbe3ea;
+      --ai-pre-bg: #0f172a;
+      --ai-pre-fg: #eef2ff;
+      --ai-section-chip-bg: #e8f1ff;
+      --ai-toc-bg: rgba(255, 255, 255, 0.82);
+      --ai-input-bg: #ffffff;
+      --ai-table-header-bg: #f8fafc;
+      --ai-badge-bg: #f8fafb;
+      --ai-badge-high-bg: #edf7f1;
+      --ai-badge-high-border: #c9e7d6;
+      --ai-badge-medium-bg: #fff7e8;
+      --ai-badge-medium-border: #ead8ad;
+      --ai-badge-low-bg: #fff0ef;
+      --ai-badge-low-border: #ebc3c0;
+      --ai-error-bg: #fff0ef;
+      --ai-error-fg: #7f1d1d;
+      --ai-error-border: #ebc3c0;
+      --ai-callout-info-bg: #f8fbff;
+      --ai-callout-success-bg: #f0fdf4;
+      --ai-callout-warning-bg: #fff7ed;
+      --ai-callout-danger-bg: #fef2f2;
       color-scheme: light;
     }
 
@@ -112,6 +134,28 @@
         --ai-chart-4: #a78bfa;
         --ai-chart-5: #f472b6;
         --ai-chart-6: #22d3ee;
+        --ai-code-bg: rgba(148, 163, 184, 0.15);
+        --ai-code-border: rgba(148, 163, 184, 0.25);
+        --ai-pre-bg: #020617;
+        --ai-pre-fg: #cbd5e1;
+        --ai-section-chip-bg: rgba(96, 165, 250, 0.18);
+        --ai-toc-bg: rgba(30, 41, 59, 0.82);
+        --ai-input-bg: #0f172a;
+        --ai-table-header-bg: rgba(148, 163, 184, 0.08);
+        --ai-badge-bg: rgba(148, 163, 184, 0.12);
+        --ai-badge-high-bg: rgba(74, 222, 128, 0.15);
+        --ai-badge-high-border: rgba(74, 222, 128, 0.35);
+        --ai-badge-medium-bg: rgba(251, 146, 60, 0.15);
+        --ai-badge-medium-border: rgba(251, 146, 60, 0.35);
+        --ai-badge-low-bg: rgba(248, 113, 113, 0.15);
+        --ai-badge-low-border: rgba(248, 113, 113, 0.35);
+        --ai-error-bg: rgba(248, 113, 113, 0.12);
+        --ai-error-fg: #fca5a5;
+        --ai-error-border: rgba(248, 113, 113, 0.35);
+        --ai-callout-info-bg: rgba(96, 165, 250, 0.08);
+        --ai-callout-success-bg: rgba(74, 222, 128, 0.08);
+        --ai-callout-warning-bg: rgba(251, 146, 60, 0.10);
+        --ai-callout-danger-bg: rgba(248, 113, 113, 0.10);
         color-scheme: dark;
       }
     }
@@ -137,6 +181,28 @@
       --ai-chart-4: #a78bfa;
       --ai-chart-5: #f472b6;
       --ai-chart-6: #22d3ee;
+      --ai-code-bg: rgba(148, 163, 184, 0.15);
+      --ai-code-border: rgba(148, 163, 184, 0.25);
+      --ai-pre-bg: #020617;
+      --ai-pre-fg: #cbd5e1;
+      --ai-section-chip-bg: rgba(96, 165, 250, 0.18);
+      --ai-toc-bg: rgba(30, 41, 59, 0.82);
+      --ai-input-bg: #0f172a;
+      --ai-table-header-bg: rgba(148, 163, 184, 0.08);
+      --ai-badge-bg: rgba(148, 163, 184, 0.12);
+      --ai-badge-high-bg: rgba(74, 222, 128, 0.15);
+      --ai-badge-high-border: rgba(74, 222, 128, 0.35);
+      --ai-badge-medium-bg: rgba(251, 146, 60, 0.15);
+      --ai-badge-medium-border: rgba(251, 146, 60, 0.35);
+      --ai-badge-low-bg: rgba(248, 113, 113, 0.15);
+      --ai-badge-low-border: rgba(248, 113, 113, 0.35);
+      --ai-error-bg: rgba(248, 113, 113, 0.12);
+      --ai-error-fg: #fca5a5;
+      --ai-error-border: rgba(248, 113, 113, 0.35);
+      --ai-callout-info-bg: rgba(96, 165, 250, 0.08);
+      --ai-callout-success-bg: rgba(74, 222, 128, 0.08);
+      --ai-callout-warning-bg: rgba(251, 146, 60, 0.10);
+      --ai-callout-danger-bg: rgba(248, 113, 113, 0.10);
       color-scheme: dark;
     }
 
@@ -278,8 +344,8 @@
     .ai-document li { margin: 6px 0; }
 
     .ai-document code {
-      background: #e9eef1;
-      border: 1px solid #dbe3ea;
+      background: var(--ai-code-bg);
+      border: 1px solid var(--ai-code-border);
       border-radius: 4px;
       padding: 1px 5px;
       font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -287,18 +353,25 @@
 
     .ai-document pre {
       overflow: auto;
-      background: #0f172a;
-      color: #eef2ff;
+      background: var(--ai-pre-bg);
+      color: var(--ai-pre-fg);
       border-radius: 6px;
       padding: 14px;
       font-size: 13px;
       line-height: 1.55;
     }
 
+    .ai-document pre code {
+      background: transparent;
+      border: 0;
+      padding: 0;
+      color: inherit;
+    }
+
     .ai-toc {
       display: none;
       padding: 10px;
-      background: rgba(255, 255, 255, 0.82);
+      background: var(--ai-toc-bg);
       border: 1px solid var(--ai-line);
       border-radius: 7px;
       box-shadow: var(--ai-shadow);
@@ -320,7 +393,7 @@
       font-size: 13px;
       line-height: 1.35;
       padding: 7px 0;
-      border-top: 1px solid rgba(217, 224, 231, 0.7);
+      border-top: 1px solid var(--ai-line);
     }
 
     .ai-toc a:hover { color: var(--ai-accent); }
@@ -342,7 +415,7 @@
       justify-content: space-between;
       gap: 14px;
       align-items: center;
-      background: #fff;
+      background: var(--ai-panel);
     }
 
     .ai-component-header::before {
@@ -355,7 +428,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 999px;
-      background: #e8f1ff;
+      background: var(--ai-section-chip-bg);
       color: var(--ai-accent);
       font-size: 12px;
       font-weight: 700;
@@ -382,7 +455,8 @@
       padding: 7px 10px;
       font: inherit;
       font-size: 13px;
-      background: #fff;
+      background: var(--ai-input-bg);
+      color: var(--ai-ink);
     }
 
     .ai-table-wrap { overflow: auto; }
@@ -404,7 +478,7 @@
 
     .ai-table th {
       color: var(--ai-muted);
-      background: #f8fafc;
+      background: var(--ai-table-header-bg);
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -420,14 +494,14 @@
       padding: 1px 7px;
       font-size: 11px;
       border: 1px solid var(--ai-line);
-      background: #f8fafb;
+      background: var(--ai-badge-bg);
       color: var(--ai-ink);
       white-space: nowrap;
     }
 
-    .ai-badge.high { color: var(--ai-green); background: #edf7f1; border-color: #c9e7d6; }
-    .ai-badge.medium { color: var(--ai-yellow); background: #fff7e8; border-color: #ead8ad; }
-    .ai-badge.low { color: var(--ai-red); background: #fff0ef; border-color: #ebc3c0; }
+    .ai-badge.high { color: var(--ai-green); background: var(--ai-badge-high-bg); border-color: var(--ai-badge-high-border); }
+    .ai-badge.medium { color: var(--ai-yellow); background: var(--ai-badge-medium-bg); border-color: var(--ai-badge-medium-border); }
+    .ai-badge.low { color: var(--ai-red); background: var(--ai-badge-low-bg); border-color: var(--ai-badge-low-border); }
 
     .ai-metric-grid {
       display: grid;
@@ -436,7 +510,7 @@
     }
 
     .ai-metric-card {
-      background: #fff;
+      background: var(--ai-panel);
       border: 1px solid var(--ai-line);
       border-radius: 8px;
       padding: 13px 14px;
@@ -482,8 +556,8 @@
     .ai-source.visible { display: block; }
 
     .ai-source pre {
-      background: #18212f;
-      color: #f5f2e8;
+      background: var(--ai-pre-bg);
+      color: var(--ai-pre-fg);
       border-radius: 7px;
       padding: 16px;
       overflow: auto;
@@ -492,9 +566,9 @@
     }
 
     .ai-error {
-      border: 1px solid #ebc3c0;
-      background: #fff0ef;
-      color: #7f1d1d;
+      border: 1px solid var(--ai-error-border);
+      background: var(--ai-error-bg);
+      color: var(--ai-error-fg);
       border-radius: 7px;
       padding: 12px;
     }
@@ -504,15 +578,15 @@
     }
 
     .ai-callout .ai-component-body {
-      background: #f8fbff;
+      background: var(--ai-callout-info-bg);
     }
 
     .ai-callout-success { border-left-color: var(--ai-green); }
-    .ai-callout-success .ai-component-body { background: #f0fdf4; }
+    .ai-callout-success .ai-component-body { background: var(--ai-callout-success-bg); }
     .ai-callout-warning { border-left-color: var(--ai-yellow); }
-    .ai-callout-warning .ai-component-body { background: #fff7ed; }
+    .ai-callout-warning .ai-component-body { background: var(--ai-callout-warning-bg); }
     .ai-callout-danger { border-left-color: var(--ai-red); }
-    .ai-callout-danger .ai-component-body { background: #fef2f2; }
+    .ai-callout-danger .ai-component-body { background: var(--ai-callout-danger-bg); }
 
     @media (max-width: 860px) {
       .ai-layout {
